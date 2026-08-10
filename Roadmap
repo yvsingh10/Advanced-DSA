@@ -1,0 +1,119 @@
+If you're starting **Data Structures and Algorithms (DSA)** from scratch, focus on understanding programming and problem-solving before jumping into difficult interview questions. Here's a structured roadmap:
+
+### Phase 1: Learn a Programming Language (1–2 weeks)
+
+Choose one language:
+
+* **C++** (most common for competitive programming)
+* **Java** (widely used in interviews)
+* **Python** (easier syntax, great for beginners)
+
+Make sure you're comfortable with:
+
+* Variables and data types
+* Input/output
+* Loops
+* Functions
+* Arrays and strings
+* Basic OOP (optional at first)
+
+---
+
+### Phase 2: Learn Time & Space Complexity (2–3 days)
+
+Understand:
+
+* Big O notation
+* Best, average, and worst-case complexity
+* Common complexities: O(1), O(log n), O(n), O(n log n), O(n²)
+
+---
+
+### Phase 3: Learn Data Structures (6–8 weeks)
+
+Study in this order:
+
+1. Arrays
+2. Strings
+3. Recursion
+4. Sorting algorithms
+5. Searching (Linear & Binary Search)
+6. Linked Lists
+7. Stacks
+8. Queues
+9. Hash Tables (HashMap)
+10. Trees (Binary Tree, BST)
+11. Heaps (Priority Queue)
+12. Graphs
+13. Tries (optional initially)
+
+For each topic:
+
+* Learn the concept.
+* Implement it yourself.
+* Solve 10–20 practice problems.
+
+---
+
+### Phase 4: Learn Algorithms (6–8 weeks)
+
+Cover:
+
+* Binary Search
+* Two Pointers
+* Sliding Window
+* Prefix Sum
+* Recursion & Backtracking
+* Greedy Algorithms
+* Divide and Conquer
+* Dynamic Programming
+* Graph Algorithms (BFS, DFS, Dijkstra, Union-Find)
+* Shortest Path & MST (advanced)
+
+---
+
+### Phase 5: Practice Regularly
+
+Suggested progression:
+
+* Easy problems until you're comfortable.
+* Medium problems after that.
+* Hard problems later.
+
+Aim for:
+
+* **2–3 problems daily**
+* Analyze your mistakes.
+* Revisit problems you couldn't solve.
+
+---
+
+### Good Resources
+
+* **Learning:** FreeCodeCamp, GeeksforGeeks, NeetCode, Abdul Bari (YouTube), Take U Forward (Striver)
+* **Practice:** LeetCode, HackerRank, Codeforces, CodeChef
+
+---
+
+### Sample 12-Week Plan
+
+| Weeks | Topics                              |
+| ----- | ----------------------------------- |
+| 1–2   | Programming basics, arrays, strings |
+| 3     | Recursion, searching, sorting       |
+| 4     | Linked Lists, Stacks, Queues        |
+| 5     | Hashing                             |
+| 6–7   | Trees, BST                          |
+| 8     | Heaps                               |
+| 9–10  | Graphs                              |
+| 11    | Greedy, Backtracking                |
+| 12    | Dynamic Programming + Revision      |
+
+### Tips
+
+* Don't memorize solutions—understand why they work.
+* Write code by hand before looking at answers.
+* Keep notes of important concepts and patterns.
+* Consistency is more important than solving many problems in one day.
+
+If you're a college student preparing for placements, a goal of **1–2 hours of DSA every day for 4–6 months** is enough to build a solid foundation and become interview-ready.
