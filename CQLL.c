@@ -12,59 +12,52 @@ struct Node *rear = NULL;
 
 void enqueue(int value)
 {
-    struct Node *newNode;
+    struct Node *ptr;
 
-    newNode = (struct Node *)malloc(sizeof(struct Node));
+    ptr = (struct Node *)malloc(sizeof(struct Node));
 
-    newNode->data = value;
+    ptr->data = value;
 
-    // Queue is empty
     if (front == NULL)
     {
-        front = newNode;
-        rear = newNode;
-
+        front = ptr;
+        rear = ptr;
         rear->next = front;
     }
     else
     {
-        newNode->next = front;
-        rear->next = newNode;
-        rear = newNode;
+        ptr->next = front;
+        rear->next = ptr;
+        rear = ptr;
+
     }
 
-    printf("%d inserted\n", value);
+    printf("Inserted Value:%d\n", value);
 }
 
 void dequeue()
 {
     struct Node *temp;
 
-    // Queue is empty
+    
     if (front == NULL)
     {
         printf("Queue is Empty\n");
         return;
     }
 
-    // Only one node
     if (front == rear)
     {
-        printf("%d deleted\n", front->data);
-
+        printf("Deleted Value:%d\n", front->data);
         free(front);
-
         front = NULL;
         rear = NULL;
     }
     else
     {
         temp = front;
-
-        printf("%d deleted\n", front->data);
-
+        printf("Deleted Value:%d\n", temp->data);
         front = front->next;
-
         rear->next = front;
 
         free(temp);
@@ -80,18 +73,14 @@ void display()
         printf("Queue is Empty\n");
         return;
     }
-
     temp = front;
-
     printf("Queue: ");
-
     do
     {
         printf("%d ", temp->data);
         temp = temp->next;
-
-    } while (temp != front);
-
+    } 
+    while (temp != front);
     printf("\n");
 }
 
@@ -100,16 +89,11 @@ int main()
     enqueue(10);
     enqueue(20);
     enqueue(30);
-
     display();
-
     dequeue();
-
     display();
-
     enqueue(40);
-
     display();
-
+    
     return 0;
 }
