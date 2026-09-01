@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node *left, *right;
+};
+
+struct node *create_bt() {
+    struct node *p;
+    p = (struct node *) malloc(sizeof(struct node));
+    int key;
+    printf("Enter the key value");
+    scanf("%d", &key);
+
+    if (key == -1) {
+        return NULL;
+    }
+
+    p->data = key;
+
+    printf("Enter the left child of key %d", key);
+    p->left = create_bt();
+
+    printf("Enter the right child of key %d", key);
+    p->right = create_bt();
+
+    return p;
+}
