@@ -10,7 +10,7 @@ struct node *create_bt() {
     struct node *p;
     p = (struct node *) malloc(sizeof(struct node));
     int key;
-    printf("Enter the key value");
+    printf("Enter the key value: ");
     scanf("%d", &key);
 
     if (key == -1) {
@@ -19,11 +19,27 @@ struct node *create_bt() {
 
     p->data = key;
 
-    printf("Enter the left child of key %d", key);
+    printf("Enter the left child of key %d: \n", key);
     p->left = create_bt();
 
-    printf("Enter the right child of key %d", key);
+    printf("Enter the right child of key %d: \n", key);
     p->right = create_bt();
 
     return p;
+}
+
+void inorder(struct node*root){
+
+    if(root!=NULL){
+        inorder(root->left);
+        printf("%d  ",root->data);
+        inorder(root->right);
+    }
+   
+}
+void main(){
+    struct node*root;
+    root=NULL;
+    root=create_bt();
+    inorder(root);
 }
