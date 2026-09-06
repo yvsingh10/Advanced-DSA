@@ -10,11 +10,18 @@ struct node
 
 struct node *front = NULL;
 
-void enqueue(int value, int priority)
+void enqueue()
 {
+    int value, priority;
     struct node *ptr, *temp;
 
     ptr = (struct node *)malloc(sizeof(struct node));
+
+    printf("Enter data: ");
+    scanf("%d", &value);
+
+    printf("Enter priority: ");
+    scanf("%d", &priority);
 
     ptr->data = value;
     ptr->priority = priority;
@@ -38,6 +45,8 @@ void enqueue(int value, int priority)
         ptr->next = temp->next;
         temp->next = ptr;
     }
+
+    printf("Element inserted successfully.\n");
 }
 
 void dequeue()
@@ -46,11 +55,12 @@ void dequeue()
 
     if (front == NULL)
     {
-        printf("Priority queue is empty\n");
+        printf("Priority queue is empty.\n");
         return;
     }
 
     temp = front;
+
     printf("Deleted element: %d\n", temp->data);
 
     front = front->next;
@@ -62,7 +72,7 @@ void peek()
 {
     if (front == NULL)
     {
-        printf("Priority queue is empty\n");
+        printf("Priority queue is empty.\n");
         return;
     }
 
@@ -76,7 +86,7 @@ void display()
 
     if (front == NULL)
     {
-        printf("Priority queue is empty\n");
+        printf("Priority queue is empty.\n");
         return;
     }
 
@@ -93,15 +103,45 @@ void display()
 
 int main()
 {
-    enqueue(30, 5);
-    enqueue(44, 1);
-    enqueue(23, 8);
+    int choice;
 
-    dequeue();
+    while (1)
+    {
+        printf("\n--- PRIORITY QUEUE ---\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Peek\n");
+        printf("4. Display\n");
+        printf("5. Exit\n");
 
-    peek();
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
 
-    display();
+        switch (choice)
+        {
+            case 1:
+                enqueue();
+                break;
+
+            case 2:
+                dequeue();
+                break;
+
+            case 3:
+                peek();
+                break;
+
+            case 4:
+                display();
+                break;
+
+            case 5:
+                exit(0);
+
+            default:
+                printf("Invalid choice.\n");
+        }
+    }
 
     return 0;
 }
