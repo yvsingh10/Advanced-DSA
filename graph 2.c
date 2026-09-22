@@ -15,6 +15,19 @@ void add_edge(int u,int v){
     adj[u]=newnode;
     
 }
+void display(int vertices){
+    struct node *temp;
+    for(int i=0;i<vertices;i++){
+        temp=adj[i];
+        printf("%d->",i);
+        while(temp!=NULL){
+            printf("%d->",temp->data);
+            temp=temp->next;
+        }
+            printf("NULL\n");
+    }
+    
+}
 int main() {
     int vertices,edges,u,v;
 
@@ -33,6 +46,7 @@ for(int i=0;i<edges;i++){
     }
 
    add_edge(u,v);
-   add_edge(u,v); 
+   add_edge(v,u); 
+   display(vertices); 
     return 0;
 }
