@@ -1,0 +1,3607 @@
+Practical No.1
+Course Outcome: CO1
+Aim: Write a program to implement Stack using Array and perform Push, Pop and Display operations.
+Theory: A Stack is a linear data structure that follows the LIFO (Last In First Out) principle — the last element inserted is the first one to be removed. It can be implemented using an array with a pointer variable 'top' that tracks the index of the most recently inserted element. The two fundamental operations are Push (insertion) and Pop (deletion); attempting to push into a full stack causes Stack Overflow, and attempting to pop from an empty stack causes Stack Underflow.
+Algorithm:
+PUSH(STACK, TOP, VALUE):
+1. Start
+2. If TOP = MAX-1, print "Stack Overflow" and exit
+3. Increment TOP by 1
+4. Set STACK[TOP] = VALUE
+5. Stop
+POP(STACK, TOP):
+1. Start
+2. If TOP = -1, print "Stack Underflow" and exit
+3. VALUE = STACK[TOP]
+4. Decrement TOP by 1
+5. Return VALUE
+6. Stop
+DISPLAY(STACK, TOP):
+1. Start
+2. If TOP = -1, print "Stack is Empty" and exit
+3. For i = TOP down to 0, print STACK[i]
+4. Stop
+Program:
+/* Practical 1: Stack using Array - Push, Pop, Display (CO1) */
+#include <stdio.h>
+#define MAX 5
+ 
+int arr[MAX];
+int top = -1;
+void push()
+{
+    int value;
+    if (top == MAX - 1)
+    {
+        printf("Stack Overflow!\n");
+        return;
+    }
+ 
+    printf("Enter element to push: ");
+    scanf("%d", &value);
+ 
+    top++;
+    arr[top] = value;
+ 
+    printf("%d inserted successfully.\n", value);
+}
+void pop()
+{
+    if (top == -1)
+    {
+        printf("Stack Underflow!\n");
+        return;
+    }
+ 
+    printf("%d deleted successfully.\n", arr[top]);
+    top--;
+}
+ 
+void display()
+{
+    int i;
+ 
+    if (top == -1)
+    {
+        printf("Stack is Empty.\n");
+        return;
+    }
+ 
+    printf("\nStack Elements are:\n");
+    for (i = top; i >= 0; i--)
+        printf("%d\n", arr[i]);
+}
+ 
+int main()
+{
+    int choice;
+ 
+    do
+    {
+        printf("\n******** STACK MENU ********");
+        printf("\n1. Push");
+        printf("\n2. Pop");
+        printf("\n3. Display");
+        printf("\n4. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+ 
+        switch (choice)
+        {
+        case 1:
+            push();
+            break;
+        case 2:
+            pop();
+            break;
+        case 3:
+            display();
+            break;
+        case 4:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 4);
+ 
+    return 0;
+}
+Sample Output:
+
+******** STACK MENU ********
+1. Push
+2. Pop
+3. Display
+4. Exit
+Enter your choice: 1
+
+Enter element to push: 10
+10 inserted successfully.
+
+******** STACK MENU ********
+Enter your choice: 1
+
+Enter element to push: 20
+20 inserted successfully.
+
+******** STACK MENU ********
+Enter your choice: 1
+
+Enter element to push: 30
+30 inserted successfully.
+
+******** STACK MENU ********
+Enter your choice: 3
+
+Stack Elements are:
+30
+20
+10
+
+******** STACK MENU ********
+Enter your choice: 2
+
+30 deleted successfully.
+
+******** STACK MENU ********
+Enter your choice: 3
+
+Stack Elements are:
+20
+10
+
+******** STACK MENU ********
+Enter your choice: 4
+
+Program Terminated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 2
+Course Outcome: CO1
+Aim: Write a program to convert Infix Expression into Postfix Expression using Stack.
+Theory: Infix notation places the operator between two operands (e.g. A+B), which is natural for humans but ambiguous for machines without precedence and parenthesis rules. Postfix (Reverse Polish) notation places the operator after its operands (e.g. AB+), removing the need for parentheses or precedence rules during evaluation. Conversion from infix to postfix is done using a stack that temporarily holds operators until they can be correctly placed in the output, based on operator precedence and associativity.
+Algorithm:
+1. Start; initialize an empty stack and an empty postfix string
+2. Scan the infix expression from left to right; for each character:
+   a. If it is an operand, append it directly to the postfix string
+   b. If it is '(', push it onto the stack
+   c. If it is ')', pop from the stack and append to postfix until '(' is found; discard the '('
+   d. If it is an operator, pop and append operators from the stack while the top has greater or equal precedence, then push the current operator
+3. After the scan, pop any remaining operators from the stack and append them to postfix
+4. Display the postfix expression
+5. Stop
+Program:
+/* Practical 2: Infix to Postfix conversion using Stack (CO1) */
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+ 
+#define MAX 100
+ 
+char stack[MAX];
+int top = -1;
+ 
+void push(char c)
+{
+    stack[++top] = c;
+}
+ 
+char pop()
+{
+    return stack[top--];
+}
+ 
+char peek()
+{
+    return stack[top];
+}
+int isEmpty()
+{
+    return top == -1;
+}
+/* Precedence of operators */
+int precedence(char op)
+{
+    if (op == '^')
+        return 3;
+    else if (op == '*' || op == '/')
+        return 2;
+    else if (op == '+' || op == '-')
+        return 1;
+    else
+        return 0;
+}
+/* Check whether character is an operator */
+int isOperator(char ch)
+{
+    return (ch == '+' || ch == '-' || ch == '*' ||
+            ch == '/' || ch == '^');
+} 
+void infixToPostfix(char infix[], char postfix[])
+{
+    int i, j = 0;
+    char ch;
+    for (i = 0; infix[i] != '\0'; i++)
+    {
+        ch = infix[i];
+        /* Operand */
+        if (isalnum(ch))
+        {
+            postfix[j++] = ch;
+        }
+        /* Left Parenthesis */
+        else if (ch == '(')
+        {
+            push(ch);
+        }
+        /* Right Parenthesis */
+        else if (ch == ')')
+        {
+            while (!isEmpty() && peek() != '(')
+            {
+                postfix[j++] = pop();
+            }
+            if (!isEmpty())
+                pop(); /* Remove '(' */
+        }
+        /* Operator */
+        else if (isOperator(ch))
+        {
+            while (!isEmpty() && precedence(peek()) >= precedence(ch))
+            {
+                postfix[j++] = pop();
+            }
+            push(ch);
+        }
+    }
+    /* Pop remaining operators */
+    while (!isEmpty())
+    {
+        postfix[j++] = pop();
+    }
+    postfix[j] = '\0';
+}
+int main()
+{
+    char infix[MAX], postfix[MAX];
+ 
+    printf("Enter Infix Expression: ");
+    scanf("%s", infix);
+ 
+    infixToPostfix(infix, postfix);
+ 
+    printf("Postfix Expression: %s\n", postfix);
+    return 0;
+}
+Sample Output:
+Enter Infix Expression: A+B*C
+
+Postfix Expression: ABC*+
+
+
+
+
+Practical No. 3
+Course Outcome: CO2
+Aim: Write a program to evaluate a Postfix Expression using Stack.
+Theory: A postfix expression can be evaluated in a single left-to-right scan without needing precedence rules or parentheses, using a stack. Operands encountered are pushed onto the stack; when an operator is encountered, the required number of operands (two, for a binary operator) are popped, the operation is applied, and the result is pushed back onto the stack. After the entire expression is scanned, the single value remaining on the stack is the final result.
+Algorithm:
+1. Start; initialize an empty stack
+2. Scan the postfix expression from left to right:
+   a. If the character is an operand, push it onto the stack
+   b. If the character is an operator, pop two operands (op2 then op1), compute op1 OPERATOR op2, and push the result
+3. After the scan, pop the final value from the stack — this is the result of the expression
+4. Display the result
+5. Stop
+Program:
+/* Practical 3: Evaluate a Postfix Expression using Stack (CO2) */
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
+#define MAX 100
+int stack[MAX];
+int top = -1;
+void push(int value)
+{
+    stack[++top] = value;
+}
+int pop()
+{
+    return stack[top--];
+} 
+/* Perform arithmetic operation */
+int calculate(int a, int b, char op)
+{
+    switch (op)
+    {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+        case '^': return (int) pow(a, b);
+        default:  return 0;
+    }
+}
+int main()
+{
+    char postfix[MAX];
+    int i, operand1, operand2, result;
+ 
+    printf("Enter Postfix Expression: ");
+    scanf("%s", postfix);
+ 
+    for (i = 0; postfix[i] != '\0'; i++)
+    {
+        char ch = postfix[i];
+ 
+        if (isdigit(ch))
+        {
+            push(ch - '0');
+        }
+        else
+        {
+            operand2 = pop();
+            operand1 = pop();
+ 
+            result = calculate(operand1, operand2, ch);
+ 
+            push(result);
+        }
+    }
+ 
+    printf("Result = %d\n", pop());
+ 
+    return 0;
+}
+Sample Output:
+
+Enter Postfix Expression: 23*54*+9-
+
+Result = 17
+
+
+
+
+
+Practical No. 4
+Course Outcome: CO2
+Aim: Write a program to implement Stack using Linked List.
+Theory: A Stack can also be implemented using a singly linked list instead of an array, which removes the fixed-size limitation. The topmost element of the stack is represented by the 'top' (head) pointer of the list. Push creates a new node and links it as the new head; Pop removes the head node and updates the head to point to the next node. Since memory is allocated dynamically, overflow is not a concern until system memory itself is exhausted.
+Algorithm:
+PUSH(VALUE):
+1. Start
+2. Create a new node and store VALUE in it
+3. Set new node's next pointer to the current TOP
+4. Set TOP = new node
+5. Stop
+POP():
+1. Start
+2. If TOP = NULL, print "Stack Underflow" and exit
+3. temp = TOP
+4. TOP = TOP->next
+5. VALUE = temp->data; free/delete temp
+6. Return VALUE
+7. Stop
+Program:
+/* Practical 4: Stack using Linked List (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+struct Node *top = NULL;
+void push()
+{
+    int value;
+    struct Node *newNode;
+    printf("Enter element: ");
+    scanf("%d", &value);
+    newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = top;
+    top = newNode;
+    printf("%d inserted successfully.\n", value);
+}
+void pop()
+{
+    struct Node *temp;
+    if (top == NULL)
+    {
+        printf("Stack Underflow!\n");
+        return;
+    }
+    temp = top;
+    printf("%d deleted successfully.\n", temp->data);
+ 
+    top = top->next;
+    free(temp);
+}
+void display()
+{
+    struct Node *temp = top;
+    if (top == NULL)
+    {
+        printf("Stack is Empty.\n");
+        return;
+    }
+ 
+    printf("\nStack Elements are:\n");
+    while (temp != NULL)
+    {
+        printf("%d\n", temp->data);
+        temp = temp->next;
+    }
+}
+ 
+int main()
+{
+    int choice;
+ 
+    do
+    {
+        printf("\n******** STACK USING LINKED LIST ********");
+        printf("\n1. Push");
+        printf("\n2. Pop");
+        printf("\n3. Display");
+        printf("\n4. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+        switch (choice)
+        {
+        case 1:
+            push();
+            break;
+        case 2:
+            pop();
+            break;
+        case 3:
+            display();
+            break;
+        case 4:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 4);
+    return 0;
+}
+Sample Output:
+
+******** STACK USING LINKED LIST ********
+1. Push
+2. Pop
+3. Display
+4. Exit
+
+Enter your choice: 1
+Enter element: 10
+10 inserted successfully.
+
+Enter your choice: 1
+Enter element: 20
+20 inserted successfully.
+
+Enter your choice: 1
+Enter element: 30
+30 inserted successfully.
+
+Enter your choice: 3
+
+Stack Elements are:
+30
+20
+10
+
+Enter your choice: 2
+30 deleted successfully.
+
+Enter your choice: 3
+
+Stack Elements are:
+20
+10
+
+Enter your choice: 4
+
+Program Terminated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 5
+Course Outcome: CO1
+Aim: Write a program to implement Linear Queue using Array.
+Theory: A Queue is a linear data structure that follows the FIFO (First In First Out) principle — the first element inserted is the first one removed. It can be implemented using an array with two pointers, 'front' and 'rear', tracking the positions for deletion and insertion respectively. In a simple linear queue, once 'rear' reaches the last index, no further insertion is possible even if slots at the front have been vacated — this limitation is later solved by the circular queue.
+Algorithm:
+INSERT/ENQUEUE(VALUE):
+1. Start
+2. If REAR = MAX-1, print "Queue Overflow" and exit
+3. If FRONT = -1, set FRONT = 0
+4. Increment REAR by 1
+5. Set QUEUE[REAR] = VALUE
+6. Stop
+DELETE/DEQUEUE():
+1. Start
+2. If FRONT = -1 or FRONT > REAR, print "Queue Underflow" and exit
+3. VALUE = QUEUE[FRONT]
+4. Increment FRONT by 1
+5. Return VALUE
+6. Stop
+Program:
+/* Practical 5: Linear Queue using Array (CO1) */
+#include <stdio.h>
+#define MAX 5
+int queue[MAX];
+int front = -1, rear = -1;
+void enqueue()
+{
+    int value;
+ 
+    if (rear == MAX - 1)
+    {
+        printf("Queue Overflow!\n");
+        return;
+    }
+    printf("Enter element: ");
+    scanf("%d", &value);
+ 
+    if (front == -1)
+        front = 0;
+ 
+    rear++;
+    queue[rear] = value;
+    printf("%d inserted successfully.\n", value);
+}
+void dequeue()
+{
+    if (front == -1)
+    {
+        printf("Queue Underflow!\n");
+        return;
+    }
+    printf("%d deleted successfully.\n", queue[front]);
+    if (front == rear)
+    {
+        front = rear = -1;
+    }
+    else
+    {
+        front++;
+    }
+}
+ 
+void display()
+{
+    int i;
+ 
+    if (front == -1)
+    {
+        printf("Queue is Empty.\n");
+        return;
+    }
+    printf("\nQueue Elements are:\n");
+    for (i = front; i <= rear; i++)
+        printf("%d ", queue[i]);
+    printf("\n");
+}
+int main()
+{
+    int choice;
+ 
+    do
+    {
+        printf("\n******** LINEAR QUEUE MENU ********");
+        printf("\n1. Enqueue");
+        printf("\n2. Dequeue");
+        printf("\n3. Display");
+        printf("\n4. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+        switch (choice)
+        {
+        case 1:
+            enqueue();
+            break;
+        case 2:
+            dequeue();
+            break;
+        case 3:
+            display();
+            break;
+        case 4:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 4);
+ 
+    return 0;
+}
+Sample Output:
+
+******** LINEAR QUEUE MENU ********
+1. Enqueue
+2. Dequeue
+3. Display
+4. Exit
+
+Enter your choice: 1
+Enter element: 10
+10 inserted successfully.
+
+Enter your choice: 1
+Enter element: 20
+20 inserted successfully.
+
+Enter your choice: 1
+Enter element: 30
+30 inserted successfully.
+
+Enter your choice: 3
+
+Queue Elements are:
+10 20 30
+
+Enter your choice: 2
+10 deleted successfully.
+
+Enter your choice: 3
+
+Queue Elements are:
+20 30
+
+Enter your choice: 4
+
+Program Terminated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 6
+Course Outcome: CO2
+Aim: Write a program to implement Circular Queue using Linked List.
+Theory: A Circular Queue logically connects the rear back to the front, so the space vacated by dequeued elements can be reused — solving the limitation of a simple linear queue. When implemented with a linked list, the rear node's 'next' pointer is made to point back to the front node, forming a circular chain, so insertion and deletion can both be done in constant time without an explicit wrap-around index calculation.
+Algorithm:
+INSERT(VALUE):
+1. Start
+2. Create a new node and store VALUE in it
+3. If queue is empty, set FRONT = REAR = new node, and new node->next = new node
+4. Else, new node->next = FRONT; REAR->next = new node; REAR = new node
+5. Stop
+DELETE():
+1. Start
+2. If queue is empty, print "Queue Underflow" and exit
+3. If FRONT = REAR (only one node), delete it and set FRONT = REAR = NULL
+4. Else, temp = FRONT; FRONT = FRONT->next; REAR->next = FRONT; delete temp
+5. Stop
+Program:
+/* Practical 6: Circular Queue using Linked List (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+ 
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+struct Node *front = NULL;
+struct Node *rear = NULL;
+void enqueue()
+{
+    int value;
+    struct Node *newNode;
+ 
+    printf("Enter element: ");
+    scanf("%d", &value);
+ 
+    newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+ 
+    if (front == NULL)
+    {
+        front = rear = newNode;
+        rear->next = front;
+    }
+    else
+    {
+        rear->next = newNode;
+        rear = newNode;
+        rear->next = front;
+    }
+ 
+    printf("%d inserted successfully.\n", value);
+}
+ 
+void dequeue()
+{
+    struct Node *temp;
+ 
+    if (front == NULL)
+    {
+        printf("Queue Underflow!\n");
+        return;
+    }
+    if (front == rear)
+    {
+        printf("%d deleted successfully.\n", front->data);
+        free(front);
+        front = rear = NULL;
+    }
+    else
+    {
+        temp = front;
+        printf("%d deleted successfully.\n", temp->data);
+ 
+        front = front->next;
+        rear->next = front;
+ 
+        free(temp);
+    }
+}
+ 
+void display()
+{
+    struct Node *temp = front;
+ 
+    if (front == NULL)
+    {
+        printf("Queue is Empty.\n");
+        return;
+    }
+ 
+    printf("\nQueue Elements are:\n");
+    do
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    } while (temp != front);
+ 
+    printf("\n");
+}
+ 
+int main()
+{
+    int choice;
+ 
+    do
+    {
+        printf("\n******** CIRCULAR QUEUE MENU ********");
+        printf("\n1. Enqueue");
+        printf("\n2. Dequeue");
+        printf("\n3. Display");
+        printf("\n4. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+ 
+        switch (choice)
+        {
+        case 1:
+            enqueue();
+            break;
+        case 2:
+            dequeue();
+            break;
+        case 3:
+            display();
+            break;
+        case 4:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 4);
+ 
+    return 0;
+}
+Sample Output:
+
+******** CIRCULAR QUEUE MENU ********
+1. Enqueue
+2. Dequeue
+3. Display
+4. Exit
+
+Enter your choice: 1
+Enter element: 10
+10 inserted successfully.
+
+Enter your choice: 1
+Enter element: 20
+20 inserted successfully.
+
+Enter your choice: 1
+Enter element: 30
+30 inserted successfully.
+
+Enter your choice: 3
+
+Queue Elements are:
+10 20 30
+
+Enter your choice: 2
+10 deleted successfully.
+
+Enter your choice: 3
+
+Queue Elements are:
+20 30
+Enter your choice: 4
+
+Program Terminated.
+
+Practical No. 7
+Course Outcome: CO2
+Aim: Write a program to implement Priority Queue using Linked List.
+Theory: A Priority Queue is an abstract data type in which every element carries a priority, and the element with the highest priority is served before elements of lower priority, regardless of insertion order (elements of equal priority are served by insertion order). When implemented with a linked list, the list is kept sorted by priority so that removal always takes the front node in O(1) time, while insertion takes O(n) time to find the correct position.
+Algorithm:
+INSERT(VALUE, PRIORITY):
+1. Start
+2. Create a new node storing VALUE and PRIORITY
+3. If list is empty or new PRIORITY is higher than the head node's, insert the new node at the front
+4. Else, traverse the list to find the correct position by priority, and insert the node there
+5. Stop
+DELETE():
+1. Start
+2. If list is empty, print "Queue Underflow" and exit
+3. Remove the front node (highest priority) and update the head pointer
+4. Return the removed value
+5. Stop
+Program:
+/* Practical 7: Priority Queue using Linked List (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    int priority;
+    struct Node *next;
+}; 
+struct Node *front = NULL;
+ 
+/* Insert according to priority (smaller number = higher priority) */
+void enqueue()
+{
+    struct Node *newNode = (struct Node *) malloc(sizeof(struct Node));
+    struct Node *temp;
+ 
+    printf("Enter Data : ");
+    scanf("%d", &newNode->data);
+ 
+    printf("Enter Priority (Smaller Number = Higher Priority): ");
+    scanf("%d", &newNode->priority);
+    newNode->next = NULL;
+ 
+    /* Queue Empty */
+    if (front == NULL)
+    {
+        front = newNode;
+    }
+    /* Insert at beginning */
+    else if (newNode->priority < front->priority)
+    {
+        newNode->next = front;
+        front = newNode;
+    }
+    else
+    {
+        temp = front;
+ 
+        while (temp->next != NULL &&
+               temp->next->priority <= newNode->priority)
+        {
+            temp = temp->next;
+        }
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+ 
+    printf("Element inserted successfully.\n");
+}
+ 
+/* Delete highest priority element */
+void dequeue()
+{
+    struct Node *temp;
+ 
+    if (front == NULL)
+    {
+        printf("Priority Queue Underflow!\n");
+        return;
+    }
+ 
+    temp = front;
+    printf("Deleted Element = %d\n", temp->data);
+ 
+    front = front->next;
+    free(temp);
+}
+ 
+void display()
+{
+    struct Node *temp = front;
+ 
+    if (front == NULL)
+    {
+        printf("Priority Queue is Empty.\n");
+        return;
+    }
+ 
+    printf("\nData\tPriority\n");
+    printf("------------------\n");
+ 
+    while (temp != NULL)
+    {
+        printf("%d\t%d\n", temp->data, temp->priority);
+        temp = temp->next;
+    }
+}
+ 
+int main()
+{
+    int choice;
+ 
+    do
+    {
+        printf("\n****** PRIORITY QUEUE MENU ******");
+        printf("\n1. Insert");
+        printf("\n2. Delete");
+        printf("\n3. Display");
+        printf("\n4. Exit");
+        printf("\nEnter Choice : ");
+        scanf("%d", &choice);
+ 
+        switch (choice)
+        {
+        case 1:
+            enqueue();
+            break;
+        case 2:
+            dequeue();
+            break;
+        case 3:
+            display();
+            break;
+        case 4:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 4);
+ 
+    return 0;
+}
+Sample Output:
+
+****** PRIORITY QUEUE MENU ******
+1. Insert
+2. Delete
+3. Display
+4. Exit
+
+Enter Choice : 1
+
+Enter Data : 100
+Enter Priority (Smaller Number = Higher Priority): 2
+
+Element inserted successfully.
+
+Enter Choice : 1
+
+Enter Data : 200
+Enter Priority (Smaller Number = Higher Priority): 1
+
+Element inserted successfully.
+
+Enter Choice : 1
+
+Enter Data : 300
+Enter Priority (Smaller Number = Higher Priority): 3
+
+Element inserted successfully.
+
+Enter Choice : 3
+
+Data    Priority
+------------------
+200     1
+100     2
+300     3
+
+Enter Choice : 2
+
+Deleted Element = 200
+
+Enter Choice : 3
+
+Data    Priority
+------------------
+100     2
+300     3
+
+Enter Choice : 4
+
+Program Terminated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 8
+Course Outcome: CO2
+Aim: Write a program to implement Double Ended Queue (Deque).
+Theory: A Double Ended Queue (Deque) is a generalized queue that allows insertion and deletion at both the front and the rear ends, effectively combining the behaviors of a stack and a queue. It can be implemented using an array with two pointers, front and rear, supporting four operations: insertFront, insertRear, deleteFront, and deleteRear.
+Algorithm:
+1. Start
+2. insertFront(VALUE): If deque is full, print "Overflow"; else move front pointer backward and insert VALUE
+3. insertRear(VALUE): If deque is full, print "Overflow"; else advance rear pointer and insert VALUE
+4. deleteFront(): If deque is empty, print "Underflow"; else remove element at front and advance front pointer
+5. deleteRear(): If deque is empty, print "Underflow"; else remove element at rear and decrement rear pointer
+6. display(): Print all elements from front to rear
+7. Stop
+Program:
+/* Practical 8: Double Ended Queue (Deque) using Array (CO2) */
+#include <stdio.h>
+#define MAX 5
+int arr[MAX];
+int front = -1, rear = -1;
+ 
+int isFull()
+{
+    return (rear == MAX - 1);
+}
+ 
+int isEmpty()
+{
+    return (front == -1);
+}
+ 
+/* Insert at Front */
+void insertFront()
+{
+    int value;
+ 
+    if (front == 0)
+    {
+        printf("Insertion at Front Not Possible!\n");
+        return;
+    }
+ 
+    printf("Enter element: ");
+    scanf("%d", &value);
+ 
+    if (isEmpty())
+    {
+        front = rear = 0;
+    }
+    else
+    {
+        front--;
+    }
+ 
+    arr[front] = value;
+ 
+    printf("%d inserted at Front.\n", value);
+}
+ 
+/* Insert at Rear */
+void insertRear()
+{
+    int value;
+ 
+    if (isFull())
+    {
+        printf("Deque Overflow!\n");
+        return;
+    }
+ 
+    printf("Enter element: ");
+    scanf("%d", &value);
+ 
+    if (isEmpty())
+    {
+        front = rear = 0;
+    }
+    else
+    {
+        rear++;
+    }
+ 
+    arr[rear] = value;
+ 
+    printf("%d inserted at Rear.\n", value);
+}
+ 
+/* Delete from Front */
+void deleteFront()
+{
+    if (isEmpty())
+    {
+        printf("Deque Underflow!\n");
+        return;
+    }
+ 
+    printf("%d deleted from Front.\n", arr[front]);
+ 
+    if (front == rear)
+    {
+        front = rear = -1;
+    }
+    else
+    {
+        front++;
+    }
+}
+ 
+/* Delete from Rear */
+void deleteRear()
+{
+    if (isEmpty())
+    {
+        printf("Deque Underflow!\n");
+        return;
+    }
+ 
+    printf("%d deleted from Rear.\n", arr[rear]);
+ 
+    if (front == rear)
+    {
+        front = rear = -1;
+    }
+    else
+    {
+        rear--;
+    }
+}
+ 
+void display()
+{
+    int i;
+ 
+    if (isEmpty())
+    {
+        printf("Deque is Empty.\n");
+        return;
+    }
+ 
+    printf("\nDeque Elements are:\n");
+    for (i = front; i <= rear; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+ 
+int main()
+{
+    int choice;
+ 
+    do
+    {
+        printf("\n******** DEQUE MENU ********");
+        printf("\n1. Insert Front");
+        printf("\n2. Insert Rear");
+        printf("\n3. Delete Front");
+        printf("\n4. Delete Rear");
+        printf("\n5. Display");
+        printf("\n6. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+ 
+        switch (choice)
+        {
+        case 1:
+            insertFront();
+            break;
+        case 2:
+            insertRear();
+            break;
+        case 3:
+            deleteFront();
+            break;
+        case 4:
+            deleteRear();
+            break;
+        case 5:
+            display();
+            break;
+        case 6:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 6);
+ 
+    return 0;
+}
+Sample Output:
+
+******** DEQUE MENU ********
+1. Insert Front
+2. Insert Rear
+3. Delete Front
+4. Delete Rear
+5. Display
+6. Exit
+
+Enter your choice: 2
+Enter element: 10
+10 inserted at Rear.
+
+Enter your choice: 2
+Enter element: 20
+20 inserted at Rear.
+
+Enter your choice: 2
+Enter element: 30
+30 inserted at Rear.
+
+Enter your choice: 5
+
+Deque Elements are:
+10 20 30
+
+Enter your choice: 3
+10 deleted from Front.
+
+Enter your choice: 5
+
+Deque Elements are:
+20 30
+
+Enter your choice: 4
+30 deleted from Rear.
+
+Enter your choice: 5
+
+Deque Elements are:
+20
+
+Enter your choice: 6
+
+Program Terminated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 9
+Course Outcome: CO2
+Aim: Write a program to implement Linear Queue using Linked List.
+Theory: A Linear Queue can also be implemented using a singly linked list, similar to a linked-list stack. Two pointers, 'front' and 'rear', point to the first and last node of the list respectively. Insertion always occurs at the rear and deletion always occurs at the front, and since nodes are allocated dynamically, the queue is not restricted by a fixed array size.
+Algorithm:
+INSERT(VALUE):
+1. Start
+2. Create a new node with VALUE, next = NULL
+3. If queue is empty, set FRONT = REAR = new node
+4. Else, REAR->next = new node; REAR = new node
+5. Stop
+DELETE():
+1. Start
+2. If FRONT = NULL, print "Queue Underflow" and exit
+3. temp = FRONT; FRONT = FRONT->next
+4. If FRONT = NULL, set REAR = NULL
+5. VALUE = temp->data; delete temp
+6. Return VALUE
+7. Stop
+Program:
+/* Practical 9: Linear Queue using Linked List (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+ 
+struct Node
+{
+    int data;
+    struct Node *next;
+};
+ 
+struct Node *front = NULL;
+struct Node *rear = NULL;
+ 
+void enqueue()
+{
+    int value;
+    struct Node *newNode;
+ 
+    printf("Enter element: ");
+    scanf("%d", &value);
+ 
+    newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+ 
+    if (rear == NULL)
+    {
+        front = rear = newNode;
+    }
+    else
+    {
+        rear->next = newNode;
+        rear = newNode;
+    }
+ 
+    printf("%d inserted successfully.\n", value);
+}
+ 
+void dequeue()
+{
+    struct Node *temp;
+ 
+    if (front == NULL)
+    {
+        printf("Queue Underflow!\n");
+        return;
+    }
+ 
+    temp = front;
+    printf("%d deleted successfully.\n", temp->data);
+ 
+    front = front->next;
+    if (front == NULL)
+        rear = NULL;
+ 
+    free(temp);
+}
+ 
+void display()
+{
+    struct Node *temp = front;
+ 
+    if (front == NULL)
+    {
+        printf("Queue is Empty.\n");
+        return;
+    }
+ 
+    printf("\nQueue Elements are:\n");
+    while (temp != NULL)
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+ 
+int main()
+{
+    int choice;
+ 
+    do
+    {
+        printf("\n******** LINEAR QUEUE USING LINKED LIST ********");
+        printf("\n1. Enqueue");
+        printf("\n2. Dequeue");
+        printf("\n3. Display");
+        printf("\n4. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+ 
+        switch (choice)
+        {
+        case 1:
+            enqueue();
+            break;
+        case 2:
+            dequeue();
+            break;
+        case 3:
+            display();
+            break;
+        case 4:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 4);
+ 
+    return 0;
+}
+Sample Output:
+
+******** LINEAR QUEUE USING LINKED LIST ********
+1. Enqueue
+2. Dequeue
+3. Display
+4. Exit
+
+Enter your choice: 1
+Enter element: 10
+10 inserted successfully.
+
+Enter your choice: 1
+Enter element: 20
+20 inserted successfully.
+
+Enter your choice: 1
+Enter element: 30
+30 inserted successfully.
+
+Enter your choice: 3
+
+Queue Elements are:
+10 20 30
+
+Enter your choice: 2
+10 deleted successfully.
+
+Enter your choice: 3
+
+Queue Elements are:
+20 30
+
+Enter your choice: 4
+
+Program Terminated.
+
+
+
+
+
+Practical No. 10
+Course Outcome: CO2
+Aim: Write a program to implement Binary Tree using Linked List.
+Theory: A Binary Tree is a hierarchical, non-linear data structure in which every node has at most two children, referred to as the left child and the right child. It is commonly represented using linked nodes, each containing a data field and two pointers (left, right). A common way to build a binary tree from a sequence of values is level-order insertion, which fills the first available empty position level by level using an auxiliary queue.
+Algorithm:
+INSERT(VALUE) — Level-order:
+1. Start
+2. Create a new node storing VALUE
+3. If root is NULL, set root = new node and stop
+4. Else, enqueue root into an auxiliary queue
+5. While queue is not empty: dequeue a node; if its left child is NULL, attach the new node there and stop; else enqueue the left child; if its right child is NULL, attach the new node there and stop; else enqueue the right child
+6. Stop
+Program:
+/* Practical 10: Binary Tree using Linked List (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+ 
+/* Function to create Binary Tree recursively (-1 = NULL) */
+struct Node *createTree()
+{
+    int value;
+    struct Node *newNode;
+    printf("Enter node value (-1 for NULL): ");
+    scanf("%d", &value);
+ 
+    if (value == -1)
+        return NULL;
+    newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+    printf("Enter left child of %d\n", value);
+    newNode->left = createTree();
+ 
+    printf("Enter right child of %d\n", value);
+    newNode->right = createTree();
+    return newNode;
+}
+ 
+/* Inorder Traversal */
+void inorder(struct Node *root)
+{
+    if (root == NULL)
+        return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+int main()
+{
+    struct Node *root = NULL;
+ 
+    printf("Create Binary Tree\n");
+    root = createTree();
+ 
+    printf("\nInorder Traversal : ");
+    inorder(root);
+    printf("\n");
+ 
+    return 0;
+}
+Sample Output:
+
+Create Binary Tree
+
+Inorder Traversal :
+40 20 50 10 30 60
+
+            10
+          /    \
+        20      30
+       /  \       \
+     40   50      60
+
+
+
+
+
+Practical No. 11
+Course Outcome: CO2
+Aim: Write a program to implement Preorder, Inorder and Postorder Traversal of Binary Tree.
+Theory: Tree traversal is the process of visiting every node of a tree exactly once, in a systematic order. Preorder (Root-Left-Right) is used to create a copy of the tree or produce a prefix expression. Inorder (Left-Root-Right) visits nodes of a Binary Search Tree in sorted order. Postorder (Left-Right-Root) is used to safely delete a tree or produce a postfix expression. All three are naturally expressed as recursive procedures.
+Algorithm:
+PREORDER(node):
+1. If node = NULL, return
+2. Visit/print node->data
+3. PREORDER(node->left)
+4. PREORDER(node->right)
+INORDER(node):
+1. If node = NULL, return
+2. INORDER(node->left)
+3. Visit/print node->data
+4. INORDER(node->right)
+POSTORDER(node):
+1. If node = NULL, return
+2. POSTORDER(node->left)
+3. POSTORDER(node->right)
+4. Visit/print node->data
+Program:
+/* Practical 11: Preorder, Inorder and Postorder Traversal of Binary Tree (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+ 
+struct Node
+{
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+ 
+/* Function to Create Binary Tree (-1 = NULL) */
+struct Node *createTree()
+{
+    int value;
+    struct Node *newNode;
+ 
+    printf("Enter node value (-1 for NULL): ");
+    scanf("%d", &value);
+ 
+    if (value == -1)
+        return NULL;
+ 
+    newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+ 
+    printf("Enter left child of %d\n", value);
+    newNode->left = createTree();
+ 
+    printf("Enter right child of %d\n", value);
+    newNode->right = createTree();
+ 
+    return newNode;
+}
+ 
+/* Preorder Traversal */
+void preorder(struct Node *root)
+{
+    if (root == NULL)
+        return;
+ 
+    printf("%d ", root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
+ 
+/* Inorder Traversal */
+void inorder(struct Node *root)
+{
+    if (root == NULL)
+        return;
+ 
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+ 
+/* Postorder Traversal */
+void postorder(struct Node *root)
+{
+    if (root == NULL)
+        return;
+ 
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d ", root->data);
+}
+ 
+int main()
+{
+    struct Node *root = NULL;
+ 
+    printf("Create Binary Tree\n");
+    root = createTree();
+ 
+    printf("\nPreorder Traversal : ");
+    preorder(root);
+ 
+    printf("\nInorder Traversal : ");
+    inorder(root);
+ 
+    printf("\nPostorder Traversal : ");
+    postorder(root);
+    printf("\n");
+ 
+    return 0;
+}
+Sample Output:
+
+Create Binary Tree
+
+Preorder Traversal :
+1 2 4 5 3 6
+Inorder Traversal :
+4 2 5 1 3 6
+Postorder Traversal :
+4 5 2 6 3 1
+
+                1
+              /   \
+             2     3
+            / \     \
+           4   5     6
+
+
+
+
+Practical No. 12
+Course Outcome: CO2
+Aim: Write a program to count total nodes, leaf nodes and height of Binary Tree.
+Theory: Several structural properties of a binary tree can be computed recursively. The total node count is 1 (for the current node) plus the counts of the left and right subtrees. A leaf node is one with no children, so the leaf count is obtained by recursively checking for NULL left and right pointers. The height of a tree is the number of edges on the longest path from the root to a leaf, computed recursively as 1 plus the maximum of the heights of the left and right subtrees.
+Algorithm:
+COUNT_NODES(node):
+1. If node = NULL, return 0
+2. Return 1 + COUNT_NODES(node->left) + COUNT_NODES(node->right)
+COUNT_LEAF(node):
+1. If node = NULL, return 0
+2. If node->left = NULL and node->right = NULL, return 1
+3. Return COUNT_LEAF(node->left) + COUNT_LEAF(node->right)
+HEIGHT(node):
+1. If node = NULL, return -1 (or 0, depending on convention)
+2. Return 1 + max(HEIGHT(node->left), HEIGHT(node->right))
+Program:
+/* Practical 12: Count total nodes, leaf nodes and height of Binary Tree (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+ 
+/* Function to Create Binary Tree (-1 = NULL) */
+struct Node *createTree()
+{
+    int value;
+    struct Node *newNode;
+    printf("Enter node value (-1 for NULL): ");
+    scanf("%d", &value);
+ 
+    if (value == -1)
+        return NULL;
+    newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+ 
+    printf("Enter left child of %d\n", value);
+    newNode->left = createTree();
+ 
+    printf("Enter right child of %d\n", value);
+    newNode->right = createTree();
+ 
+    return newNode;
+}
+ 
+/* Function to Count Total Nodes */
+int countNodes(struct Node *root)
+{
+    if (root == NULL)
+        return 0;
+    return countNodes(root->left) + countNodes(root->right) + 1;
+}
+ 
+/* Function to Count Leaf Nodes */
+int countLeaf(struct Node *root)
+{
+    if (root == NULL)
+        return 0;
+ 
+    if (root->left == NULL && root->right == NULL)
+        return 1;
+ 
+    return countLeaf(root->left) + countLeaf(root->right);
+}
+ 
+/* Function to Find Height */
+int height(struct Node *root)
+{
+    int leftHeight, rightHeight;
+ 
+    if (root == NULL)
+        return 0;
+ 
+    leftHeight = height(root->left);
+    rightHeight = height(root->right);
+ 
+    if (leftHeight > rightHeight)
+        return leftHeight + 1;
+    else
+        return rightHeight + 1;
+}
+ 
+int main()
+{
+    struct Node *root = NULL;
+ 
+    printf("Create Binary Tree\n");
+    root = createTree();
+ 
+    printf("\nTotal Nodes = %d", countNodes(root));
+    printf("\nLeaf Nodes = %d", countLeaf(root));
+    printf("\nHeight of Tree = %d\n", height(root));
+ 
+    return 0;
+}
+Sample Output:
+
+Create Binary Tree
+
+Total Nodes = 6
+
+Leaf Nodes = 3
+
+Height of Tree = 3
+
+                10
+              /    \
+            20      30
+           /  \       \
+         40   50      60
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 13
+Course Outcome: CO2
+Aim: Write a program to implement Binary Search Tree with insertion, searching and deletion.
+Theory: A Binary Search Tree (BST) is a binary tree that maintains an ordering property: for every node, all values in its left subtree are smaller and all values in its right subtree are greater. This ordering enables average-case O(log n) search, insertion, and deletion. Deletion has three cases: deleting a leaf node (simply remove it), a node with a single child (link the child directly to the parent), and a node with two children (replace its value with its inorder successor, then delete the successor).
+Algorithm:
+INSERT(node, value):
+1. If node = NULL, create a new node with value and return it
+2. If value < node->data, node->left = INSERT(node->left, value)
+3. Else, node->right = INSERT(node->right, value)
+4. Return node
+DELETE(node, value):
+1. If node = NULL, return NULL
+2. If value < node->data, recurse left; if value > node->data, recurse right
+3. On match: if node is a leaf, delete it directly
+4. If node has one child, replace node with that child
+5. If node has two children, find the inorder successor (smallest value in right subtree), copy its value into node, then recursively delete the successor from the right subtree
+6. Return node
+Program:
+/* Practical 13: Binary Search Tree - Insertion, Searching and Deletion (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+ 
+struct Node
+{
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+ 
+/* Create New Node */
+struct Node *createNode(int value)
+{
+    struct Node *newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+ 
+/* Insert Node */
+struct Node *insert(struct Node *root, int value)
+{
+    if (root == NULL)
+        return createNode(value);
+ 
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
+ 
+    return root;
+}
+ 
+/* Search Node */
+struct Node *search(struct Node *root, int key)
+{
+    if (root == NULL || root->data == key)
+        return root;
+ 
+    if (key < root->data)
+        return search(root->left, key);
+ 
+    return search(root->right, key);
+}
+ 
+/* Find Minimum Node */
+struct Node *findMin(struct Node *root)
+{
+    while (root->left != NULL)
+        root = root->left;
+    return root;
+}
+ 
+/* Delete Node */
+struct Node *deleteNode(struct Node *root, int key)
+{
+    struct Node *temp;
+ 
+    if (root == NULL)
+        return NULL;
+ 
+    if (key < root->data)
+        root->left = deleteNode(root->left, key);
+    else if (key > root->data)
+        root->right = deleteNode(root->right, key);
+    else
+    {
+        /* Node with no child */
+        if (root->left == NULL && root->right == NULL)
+        {
+            free(root);
+            return NULL;
+        }
+        /* Node with one child */
+        else if (root->left == NULL)
+        {
+            temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL)
+        {
+            temp = root->left;
+            free(root);
+            return temp;
+        }
+ 
+        /* Node with two children */
+        temp = findMin(root->right);
+        root->data = temp->data;
+        root->right = deleteNode(root->right, temp->data);
+    }
+ 
+    return root;
+}
+ 
+/* Inorder Traversal */
+void inorder(struct Node *root)
+{
+    if (root == NULL)
+        return;
+ 
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+ 
+int main()
+{
+    struct Node *root = NULL;
+    int choice, value;
+ 
+    do
+    {
+        printf("\n******** BINARY SEARCH TREE MENU ********");
+        printf("\n1. Insert");
+        printf("\n2. Search");
+        printf("\n3. Delete");
+        printf("\n4. Display (Inorder)");
+        printf("\n5. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+ 
+        switch (choice)
+        {
+        case 1:
+            printf("Enter value: ");
+            scanf("%d", &value);
+            root = insert(root, value);
+            break;
+        case 2:
+            printf("Enter value to search: ");
+            scanf("%d", &value);
+            if (search(root, value))
+                printf("%d Found in BST.\n", value);
+            else
+                printf("%d Not Found.\n", value);
+            break;
+        case 3:
+            printf("Enter value to delete: ");
+            scanf("%d", &value);
+            root = deleteNode(root, value);
+            printf("Deletion completed.\n");
+            break;
+        case 4:
+            printf("\nBST (Inorder Traversal): ");
+            inorder(root);
+            printf("\n");
+            break;
+        case 5:
+            printf("Program Terminated.\n");
+            break;
+        default:
+            printf("Invalid Choice!\n");
+        }
+    } while (choice != 5);
+ 
+    return 0;
+}
+Sample Output:
+BST Before Deletion
+               50
+             /    \
+           30      70
+          /  \    /  \
+        20   40 60   80
+
+BST After Deleting 30
+               50
+             /    \
+           40      70
+          /       /  \
+        20      60   80
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 14
+Course Outcome: CO2
+Aim: Write a program to implement searching in Binary Search Tree.
+Theory: Searching in a Binary Search Tree exploits the ordering property to eliminate roughly half the remaining nodes at each step, giving average-case O(log n) performance (O(n) in the worst case for a skewed tree). Starting at the root, the target value is compared with the current node: if equal, the search succeeds; if smaller, the search continues in the left subtree; if larger, it continues in the right subtree — repeating until the value is found or a NULL pointer is reached.
+Algorithm:
+SEARCH(node, value):
+1. Start
+2. If node = NULL, return "Not Found"
+3. If value = node->data, return "Found"
+4. If value < node->data, return SEARCH(node->left, value)
+5. Else, return SEARCH(node->right, value)
+6. Stop
+Program:
+/* Practical 14: Searching in Binary Search Tree (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    struct Node *left;
+    struct Node *right;
+};
+ 
+/* Create New Node */
+struct Node *createNode(int value)
+{
+    struct Node *newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+ 
+/* Insert into BST */
+struct Node *insert(struct Node *root, int value)
+{
+    if (root == NULL)
+        return createNode(value);
+ 
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
+ 
+    return root;
+}
+ 
+/* Search in BST */
+struct Node *search(struct Node *root, int key)
+{
+    if (root == NULL || root->data == key)
+        return root;
+ 
+    if (key < root->data)
+        return search(root->left, key);
+ 
+    return search(root->right, key);
+}
+ 
+/* Inorder Traversal */
+void inorder(struct Node *root)
+{
+    if (root == NULL)
+        return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+} 
+int main()
+{
+    struct Node *root = NULL;
+    struct Node *result;
+    int n, i, value, key;
+ 
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+ 
+    printf("Enter BST elements:\n");
+    for (i = 0; i < n; i++)
+    {
+        scanf("%d", &value);
+        root = insert(root, value);
+    }
+ 
+    printf("\nBST (Inorder Traversal): ");
+    inorder(root);
+ 
+    printf("\n\nEnter element to search: ");
+    scanf("%d", &key);
+ 
+    result = search(root, key);
+ 
+    if (result != NULL)
+        printf("%d found in the Binary Search Tree.\n", key);
+    else
+        printf("%d not found in the Binary Search Tree.\n", key);
+ 
+    return 0;
+}
+Sample Output:
+
+BST (Inorder Traversal):
+20 30 40 50 60 70 80
+
+Enter element to search:
+90
+
+90 not found in the Binary Search Tree.
+
+               50
+             /    \
+           30      70
+          /  \    /  \
+        20   40 60   80
+
+
+
+
+
+
+
+
+
+
+
+
+
+Practical No. 15
+Course Outcome: CO2
+Aim: Write a program to implement AVL Tree.
+Theory: An AVL tree is a self-balancing Binary Search Tree in which the difference between the heights of the left and right subtrees (the balance factor) of every node is at most 1. After each insertion or deletion, the balance factor of affected nodes is checked; if it is violated, one of four rotations — LL, RR, LR, or RL — is applied to restore balance, which guarantees that search, insertion, and deletion all remain O(log n).
+Algorithm:
+INSERT(node, value):
+1. Perform standard BST insertion of value
+2. Update the height of node
+3. Compute balance factor = height(node->left) - height(node->right)
+4. If balance > 1 and value < node->left->data → perform Right Rotation (LL case)
+5. If balance < -1 and value > node->right->data → perform Left Rotation (RR case)
+6. If balance > 1 and value > node->left->data → Left-Rotate the left child, then Right-Rotate node (LR case)
+7. If balance < -1 and value < node->right->data → Right-Rotate the right child, then Left-Rotate node (RL case)
+8. Return the (possibly new) root of this subtree
+Program:
+/* Practical 15: AVL Tree (CO2) */
+#include <stdio.h>
+#include <stdlib.h>
+struct Node
+{
+    int data;
+    struct Node *left;
+    struct Node *right;
+    int height;
+};
+ 
+/* Function to get height */
+int getHeight(struct Node *node)
+{
+    if (node == NULL)
+        return 0;
+    return node->height;
+}
+ 
+/* Maximum of two numbers */
+int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+ 
+/* Create new node */
+struct Node *createNode(int value)
+{
+    struct Node *newNode = (struct Node *) malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    newNode->height = 1;
+    return newNode;
+}
+ 
+/* Right Rotation */
+struct Node *rightRotate(struct Node *y)
+{
+    struct Node *x = y->left;
+    struct Node *T2 = x->right;
+ 
+    x->right = y;
+    y->left = T2;
+ 
+    y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
+    x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
+ 
+    return x;
+}
+ 
+/* Left Rotation */
+struct Node *leftRotate(struct Node *x)
+{
+    struct Node *y = x->right;
+    struct Node *T2 = y->left;
+ 
+    y->left = x;
+    x->right = T2;
+ 
+    x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
+    y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
+ 
+    return y;
+}
+ 
+/* Balance Factor */
+int getBalance(struct Node *node)
+{
+    if (node == NULL)
+        return 0;
+    return getHeight(node->left) - getHeight(node->right);
+}
+ 
+/* Insert Node */
+struct Node *insert(struct Node *node, int value)
+{
+    int balance;
+ 
+    if (node == NULL)
+        return createNode(value);
+ 
+    if (value < node->data)
+        node->left = insert(node->left, value);
+    else if (value > node->data)
+        node->right = insert(node->right, value);
+    else
+        return node;
+ 
+    node->height = 1 + max(getHeight(node->left), getHeight(node->right));
+ 
+    balance = getBalance(node);
+ 
+    /* LL Rotation */
+    if (balance > 1 && value < node->left->data)
+        return rightRotate(node);
+ 
+    /* RR Rotation */
+    if (balance < -1 && value > node->right->data)
+        return leftRotate(node);
+ 
+    /* LR Rotation */
+    if (balance > 1 && value > node->left->data)
+    {
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
+    }
+ 
+    /* RL Rotation */
+    if (balance < -1 && value < node->right->data)
+    {
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
+    }
+ 
+    return node;
+}
+ 
+/* Inorder Traversal */
+void inorder(struct Node *root)
+{
+    if (root == NULL)
+        return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+int main()
+{
+    struct Node *root = NULL;
+    int n, i, value;
+ 
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+ 
+    printf("Enter elements:\n");
+    for (i = 0; i < n; i++)
+    {
+        scanf("%d", &value);
+        root = insert(root, value);
+    }
+    printf("\nInorder Traversal of AVL Tree:\n");
+    inorder(root);
+    printf("\n");
+    return 0;
+}
+Sample Output:
+Inorder Traversal of AVL Tree:
+10 20 25 30 40 50
+
+          30
+        /    \
+      20      40
+     /  \       \
+   10   25      50
+Practical No. 16
+Course Outcome: CO3
+Aim: Apply Adjacency Matrix and Adjacency List to represent a graph.
+Theory: A Graph G(V, E) is a non-linear data structure consisting of a set of vertices V and a set of edges E connecting pairs of vertices. Two common representations are the Adjacency Matrix — a V×V matrix where cell[i][j] = 1 if an edge exists between vertex i and vertex j, giving O(1) edge lookup at O(V²) space — and the Adjacency List — an array of lists where each vertex stores only its adjacent vertices, giving O(V+E) space, which is more efficient for sparse graphs.
+Algorithm:
+ADJACENCY MATRIX:
+1. Initialize a V×V matrix with all entries 0
+2. For every edge (u, v): set matrix[u][v] = 1 (and matrix[v][u] = 1 for an undirected graph)
+3. Display the matrix
+
+ADJACENCY LIST:
+1. Create an array of V linked lists
+2. For every edge (u, v): add v to list[u] (and add u to list[v] for an undirected graph)
+3. Display all lists
+Program:
+/* Practical 16: Adjacency Matrix and Adjacency List to represent a Graph (CO3) */
+#include <stdio.h>
+#include <stdlib.h>
+#define MAX 10
+int adjMatrix[MAX][MAX];
+struct Node { int vertex; struct Node *next; };
+struct Node *adjList[MAX];
+ 
+void addEdgeMatrix(int u, int v) { adjMatrix[u][v] = 1; adjMatrix[v][u] = 1; }
+void addEdgeList(int u, int v) {
+    struct Node *n1 = (struct Node*)malloc(sizeof(struct Node));
+    n1->vertex = v; n1->next = adjList[u]; adjList[u] = n1;
+    struct Node *n2 = (struct Node*)malloc(sizeof(struct Node));
+    n2->vertex = u; n2->next = adjList[v]; adjList[v] = n2;
+}
+void displayMatrix(int n) {
+    printf("\nAdjacency Matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) printf("%d ", adjMatrix[i][j]);
+        printf("\n");
+    }
+}
+void displayList(int n) {
+    printf("\nAdjacency List:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d: ", i);
+        struct Node *temp = adjList[i];
+        while (temp != NULL) { printf("%d -> ", temp->vertex); temp = temp->next; }
+        printf("NULL\n");
+    }
+}
+int main() {
+    int n, e, u, v;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    for (int i = 0; i < e; i++) {
+        printf("Enter edge %d (u v): ", i + 1);
+        scanf("%d %d", &u, &v);
+        addEdgeMatrix(u, v);
+        addEdgeList(u, v);
+    }
+    displayMatrix(n);
+    displayList(n);
+    return 0;
+}
+Sample Output:
+Enter number of vertices: 5
+Enter number of edges: 4
+Edges: (0,1) (0,2) (1,3) (2,4)
+ 
+Adjacency Matrix:
+0 1 1 0 0
+1 0 0 1 0
+1 0 0 0 1
+0 1 0 0 0
+0 0 1 0 0
+ 
+Adjacency List:
+0: 2 -> 1 -> NULL
+1: 3 -> 0 -> NULL
+2: 4 -> 0 -> NULL
+3: 1 -> NULL
+4: 2 -> NULL
+
+ Practical No. 17
+Course Outcome: CO3
+Aim: Write a program to perform Breadth First Search (BFS).
+Theory: Breadth First Search (BFS) explores a graph level by level, visiting all neighbors of the current vertex before moving on to the next level of vertices. It uses a Queue to maintain the visiting order and a visited array/set to avoid processing any vertex more than once, making it well suited for finding the shortest path in an unweighted graph.
+Algorithm:
+1. Start; mark all vertices as unvisited; create an empty queue
+2. Mark the source vertex as visited and enqueue it
+3. While the queue is not empty:
+   a. Dequeue a vertex v and visit/print it
+   b. For every unvisited neighbor u of v, mark u visited and enqueue u
+4. Repeat step 3 until the queue is empty
+5. Stop
+Program:
+/* Practical 17: Breadth First Search (BFS) (CO3) */
+#include <stdio.h>
+#define MAX 10
+int adj[MAX][MAX], visited[MAX], queue[MAX];
+int front = -1, rear = -1;
+void enqueue(int v) { queue[++rear] = v; if (front == -1) front = 0; }
+int dequeue() { return queue[front++]; }
+int isEmpty() { return front > rear || front == -1; }
+ 
+void bfs(int start, int n) {
+    for (int i = 0; i < n; i++) visited[i] = 0;
+    front = rear = -1;
+    visited[start] = 1;
+    enqueue(start);
+    printf("BFS Traversal: ");
+    while (!isEmpty()) {
+        int curr = dequeue();
+        printf("%d ", curr);
+        for (int i = 0; i < n; i++) {
+            if (adj[curr][i] == 1 && !visited[i]) { visited[i] = 1; enqueue(i); }
+        }
+    }
+    printf("\n");
+}
+int main() {
+    int n, e, u, v, start;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    for (int i = 0; i < e; i++) {
+        printf("Enter edge %d (u v): ", i + 1);
+        scanf("%d %d", &u, &v);
+        adj[u][v] = adj[v][u] = 1;
+    }
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
+    bfs(start, n);
+    return 0;
+}
+Sample Output:
+Enter number of vertices: 6
+Enter number of edges: 5
+Edges: (0,1) (0,2) (1,3) (1,4) (2,5)
+Enter starting vertex: 0
+ 
+BFS Traversal: 0 1 2 3 4 5
+
+ Practical No. 18
+Course Outcome: CO3
+Aim: Write a program to perform Depth First Search (DFS).
+Theory: Depth First Search (DFS) explores a graph by going as far as possible along a branch before backtracking, typically implemented using recursion (or an explicit stack) along with a visited array to prevent revisiting vertices and to avoid infinite loops in cyclic graphs.
+Algorithm:
+DFS(v):
+1. Mark vertex v as visited and print/visit it
+2. For every neighbor u of v: if u is not visited, recursively call DFS(u)
+3. When all neighbors of v have been explored, return (backtrack) to the caller
+Program:
+/* Practical 18: Depth First Search (DFS) (CO3) */
+#include <stdio.h>
+#define MAX 10
+int adj[MAX][MAX], visited[MAX];
+void dfs(int v, int n) {
+    visited[v] = 1;
+    printf("%d ", v);
+    for (int i = 0; i < n; i++) {
+        if (adj[v][i] == 1 && !visited[i]) dfs(i, n);
+    }
+}
+int main() {
+    int n, e, u, v, start;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    for (int i = 0; i < e; i++) {
+        printf("Enter edge %d (u v): ", i + 1);
+        scanf("%d %d", &u, &v);
+        adj[u][v] = adj[v][u] = 1;
+    }
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
+    printf("DFS Traversal: ");
+    dfs(start, n);
+    printf("\n");
+    return 0;
+}
+Sample Output:
+Enter number of vertices: 6
+Enter number of edges: 5
+Edges: (0,1) (0,2) (1,3) (1,4) (2,5)
+Enter starting vertex: 0
+ 
+DFS Traversal: 0 1 3 4 2 5
+
+ Practical No. 19
+Course Outcome: CO3
+Aim: Write a program to find MST using Prim's Algorithm.
+Theory: Prim's Algorithm finds a Minimum Spanning Tree (MST) of a weighted, connected graph by growing a single tree starting from an arbitrary vertex. At each step, it greedily adds the cheapest edge that connects a vertex already in the tree to a vertex outside it, continuing until all vertices are included. Using an adjacency matrix, it runs in O(V²) time.
+Algorithm:
+1. Start; choose an arbitrary vertex as the initial MST node and mark it visited
+2. Repeat until all vertices are included in the MST:
+   a. Among all edges connecting a visited vertex to an unvisited vertex, find the one with minimum weight
+   b. Add that edge and vertex to the MST; mark the new vertex visited
+3. Display the MST edges and the total weight
+4. Stop
+Program:
+/* Practical 19: MST using Prim's Algorithm (CO3) */
+#include <stdio.h>
+#define MAX 10
+#define INF 9999
+int graph[MAX][MAX];
+int main() {
+    int n;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter adjacency matrix (0 for no edge):\n");
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++) scanf("%d", &graph[i][j]);
+ 
+    int parent[MAX], key[MAX], visited[MAX];
+    for (int i = 0; i < n; i++) { key[i] = INF; visited[i] = 0; }
+    key[0] = 0; parent[0] = -1;
+ 
+    for (int count = 0; count < n - 1; count++) {
+        int min = INF, u = -1;
+        for (int v = 0; v < n; v++)
+            if (!visited[v] && key[v] < min) { min = key[v]; u = v; }
+        visited[u] = 1;
+        for (int v = 0; v < n; v++)
+            if (graph[u][v] && !visited[v] && graph[u][v] < key[v]) {
+                key[v] = graph[u][v];
+                parent[v] = u;
+            }
+    }
+    int total = 0;
+    printf("\nEdge \tWeight\n");
+    for (int i = 1; i < n; i++) { printf("%d - %d \t%d\n", parent[i], i, key[i]); total += key[i]; }
+    printf("Total Weight of MST = %d\n", total);
+    return 0;
+}
+Sample Output:
+Enter number of vertices: 5
+Adjacency Matrix entered (0 = no edge)
+ 
+Edge      Weight
+0 - 1      2
+1 - 2      3
+0 - 3      6
+1 - 4      5
+Total Weight of MST = 16
+
+ Practical No. 20
+Course Outcome: CO3
+Aim: Write a program to find MST using Kruskal's Algorithm.
+Theory: Kruskal's Algorithm builds a Minimum Spanning Tree (MST) by sorting all edges of the graph in ascending order of weight, then adding edges one by one to the MST as long as they do not form a cycle with the edges already chosen — cycle detection is done efficiently using the Union-Find (Disjoint Set) data structure. The process stops once V-1 edges have been selected.
+Algorithm:
+1. Sort all edges of the graph in ascending order of weight
+2. Initialize each vertex as its own separate set (Union-Find)
+3. For every edge (u, v) in sorted order:
+   a. If find(u) ≠ find(v) (adding it does not form a cycle), add the edge to the MST and perform union(u, v)
+4. Repeat step 3 until V-1 edges have been selected
+5. Display the MST edges and the total weight
+6. Stop
+Program:
+/* Practical 20: MST using Kruskal's Algorithm (CO3) */
+#include <stdio.h>
+#define MAX 20
+int parent[MAX];
+int find(int i) { while (parent[i] != i) i = parent[i]; return i; }
+void unionSet(int i, int j) { parent[find(i)] = find(j); }
+ 
+struct Edge { int u, v, w; };
+int main() {
+    int n, e;
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+    printf("Enter number of edges: ");
+    scanf("%d", &e);
+    struct Edge edges[MAX];
+    printf("Enter edges as (u v weight):\n");
+    for (int i = 0; i < e; i++) scanf("%d %d %d", &edges[i].u, &edges[i].v, &edges[i].w);
+ 
+    for (int i = 0; i < e - 1; i++)
+        for (int j = 0; j < e - i - 1; j++)
+            if (edges[j].w > edges[j + 1].w) {
+                struct Edge t = edges[j]; edges[j] = edges[j + 1]; edges[j + 1] = t;
+            }
+ 
+    for (int i = 0; i < n; i++) parent[i] = i;
+ 
+    int total = 0, count = 0;
+    printf("\nEdges in MST:\n");
+    for (int i = 0; i < e && count < n - 1; i++) {
+        int u = edges[i].u, v = edges[i].v;
+        if (find(u) != find(v)) {
+            printf("%d - %d \t%d\n", u, v, edges[i].w);
+            unionSet(u, v);
+            total += edges[i].w;
+            count++;
+        }
+    }
+    printf("Total Weight of MST = %d\n", total);
+    return 0;
+}
+Sample Output:
+Enter number of vertices: 4
+Enter number of edges: 5
+Edges (u v weight): (0,1,10) (0,2,6) (0,3,5) (1,3,15) (2,3,4)
+ 
+Edges in MST:
+2 - 3      4
+0 - 3      5
+0 - 1      10
+Total Weight of MST = 19
+
+ Practical No. 21
+Course Outcome: CO3
+Aim: Write a program to implement a simple Hash Table using the Division Hash Function.
+Theory: Hashing maps keys to array indices using a hash function, giving average-case O(1) insertion, search, and deletion. The Division Method computes the index as h(key) = key % table_size. Since two different keys can map to the same index (a collision), a collision-resolution technique such as linear probing or chaining is required.
+Algorithm:
+INSERT(key):
+1. Compute index = key % TABLE_SIZE
+2. If the slot at index is empty, place key there
+3. Else, probe the next slot using linear probing: index = (index + 1) % TABLE_SIZE, and repeat until an empty slot is found
+4. Stop
+Program:
+/* Practical 21: Simple Hash Table using Division Hash Function (CO3) */
+#include <stdio.h>
+#define SIZE 10
+int hashTable[SIZE];
+int isOccupied[SIZE] = {0};
+ 
+int hashFunction(int key) { return key % SIZE; }
+ 
+void insert(int key) {
+    int index = hashFunction(key);
+    int original = index;
+    while (isOccupied[index]) {
+        index = (index + 1) % SIZE;
+        if (index == original) { printf("Hash Table Full!\n"); return; }
+    }
+    hashTable[index] = key;
+    isOccupied[index] = 1;
+    printf("%d inserted at index %d\n", key, index);
+}
+void display() {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < SIZE; i++) {
+        if (isOccupied[i]) printf("Index %d: %d\n", i, hashTable[i]);
+        else printf("Index %d: empty\n", i);
+    }
+}
+int main() {
+    int n, key;
+    printf("Enter number of elements to insert: ");
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        printf("Enter element %d: ", i + 1);
+        scanf("%d", &key);
+        insert(key);
+    }
+    display();
+    return 0;
+}
+Sample Output:
+Enter number of elements to insert: 6
+Elements: 23 45 12 37 29 15
+ 
+23 inserted at index 3
+45 inserted at index 5
+12 inserted at index 2
+37 inserted at index 7
+29 inserted at index 9
+15 inserted at index 6
+ 
+Hash Table:
+Index 0: empty   Index 1: empty   Index 2: 12
+Index 3: 23      Index 4: empty   Index 5: 45
+Index 6: 15      Index 7: 37      Index 8: empty
+Index 9: 29
+
+ Practical No. 22
+Course Outcome: CO3
+Aim: Write a program to perform Insertion, Searching, and Deletion operations in a Hash Table.
+Theory: This program extends hashing to full insertion, searching, and deletion using open addressing. Searching follows the same probe sequence used during insertion until the key is found or an empty slot is reached. Deletion requires marking the slot as 'deleted' (a tombstone) rather than truly empty, so that the probe sequence for other keys sharing that path is not broken.
+Algorithm:
+SEARCH(key):
+1. Compute index = hash(key)
+2. While the slot is not empty: if slot = key, return "Found"; else probe the next index
+3. If the loop ends without a match, return "Not Found"
+
+DELETE(key):
+1. Locate the key using the SEARCH procedure
+2. If found, mark the slot as deleted (tombstone)
+3. Else, print "Key not found"
+Program:
+/* Practical 22: Insertion, Searching, Deletion in Hash Table (CO3) */
+#include <stdio.h>
+#define SIZE 10
+int hashTable[SIZE];
+int isOccupied[SIZE] = {0};
+int hashFunction(int key) { return key % SIZE; }
+ 
+void insert(int key) {
+    int index = hashFunction(key), original = index;
+    while (isOccupied[index]) {
+        index = (index + 1) % SIZE;
+        if (index == original) { printf("Hash Table Full!\n"); return; }
+    }
+    hashTable[index] = key;
+    isOccupied[index] = 1;
+    printf("%d inserted at index %d\n", key, index);
+}
+int search(int key) {
+    int index = hashFunction(key), original = index;
+    while (isOccupied[index]) {
+        if (hashTable[index] == key) return index;
+        index = (index + 1) % SIZE;
+        if (index == original) break;
+    }
+    return -1;
+}
+void deleteKey(int key) {
+    int index = search(key);
+    if (index == -1) { printf("%d not found!\n", key); return; }
+    isOccupied[index] = 0;
+    printf("%d deleted from index %d\n", key, index);
+}
+void display() {
+    printf("\nHash Table:\n");
+    for (int i = 0; i < SIZE; i++) {
+        if (isOccupied[i]) printf("Index %d: %d\n", i, hashTable[i]);
+        else printf("Index %d: empty\n", i);
+    }
+}
+int main() {
+    int choice, key;
+    do {
+        printf("\n******** HASH TABLE MENU ********\n1. Insert\n2. Search\n3. Delete\n4. Display\n5. Exit\nEnter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1: printf("Enter key: "); scanf("%d", &key); insert(key); break;
+            case 2: printf("Enter key to search: "); scanf("%d", &key);
+                    { int idx = search(key);
+                      if (idx != -1) printf("%d found at index %d\n", key, idx);
+                      else printf("%d not found.\n", key); }
+                    break;
+            case 3: printf("Enter key to delete: "); scanf("%d", &key); deleteKey(key); break;
+            case 4: display(); break;
+            case 5: printf("Program Terminated.\n"); break;
+            default: printf("Invalid Choice!\n");
+        }
+    } while (choice != 5);
+    return 0;
+}
+Sample Output:
+Insert 23, 45, 12
+23 inserted at index 3
+45 inserted at index 5
+12 inserted at index 2
+ 
+Search 23 -> 23 found at index 3
+Delete 45 -> 45 deleted from index 5
+ 
+Hash Table:
+Index 2: 12   Index 3: 23   (others empty)
+
+ Practical No. 23
+Course Outcome: CO4
+Aim: Analyze Recursive Algorithm Mathematically & implement in C.
+Theory: Recursive algorithms solve a problem by having a function call itself on smaller subproblems, combined with a base case that terminates the recursion (e.g., computing a factorial). Their time complexity is analyzed by setting up a recurrence relation and solving it using methods such as substitution, the recursion-tree method, or the Master Theorem. For factorial, T(n) = T(n-1) + O(1), which resolves to O(n).
+Algorithm:
+FACTORIAL(n):
+1. If n = 0, return 1 (base case)
+2. Else, return n * FACTORIAL(n-1)
+3. Stop
+Program:
+/* Practical 23: Analyze Recursive Algorithm Mathematically & Implement in C (CO4)
+ * Example: Factorial using Recursion
+ * Recurrence Relation: T(n) = T(n-1) + O(1), T(0) = O(1)
+ * Solving by back-substitution: T(n) = O(n)
+ */
+#include <stdio.h>
+long long factorial(int n) {
+    if (n == 0 || n == 1) return 1;      /* Base case: O(1) */
+    return n * factorial(n - 1);          /* Recursive case: T(n-1) + O(1) */
+}
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Factorial of %d = %lld\n", n, factorial(n));
+    printf("\nMathematical Analysis:\n");
+    printf("Recurrence Relation : T(n) = T(n-1) + c\n");
+    printf("Base Condition      : T(0) = c\n");
+    printf("Solving by substitution:\n");
+    printf("T(n) = T(n-1) + c\n");
+    printf("     = T(n-2) + 2c\n");
+    printf("     = ... = T(0) + nc = O(n)\n");
+    printf("Time Complexity  : O(n)\n");
+    printf("Space Complexity : O(n)  (recursion call stack)\n");
+    return 0;
+}
+Sample Output:
+Enter a number: 5
+Factorial of 5 = 120
+ 
+Mathematical Analysis:
+Recurrence Relation : T(n) = T(n-1) + c
+Base Condition      : T(0) = c
+Solving by substitution:
+T(n) = T(n-1) + c = T(n-2) + 2c = ... = T(0) + nc = O(n)
+Time Complexity  : O(n)
+Space Complexity : O(n)  (recursion call stack)
+
+ Practical No. 24
+Course Outcome: CO4
+Aim: Analyze Non-Recursive Algorithm Mathematically & implement in C.
+Theory: Non-recursive (iterative) algorithms solve a problem using loops instead of self-calls. Their time complexity is generally easier to analyze — simply by counting the number of loop iterations. For example, the iterative version of factorial runs in O(n) time and O(1) auxiliary space, avoiding the O(n) call-stack space used by the recursive version.
+Algorithm:
+FACTORIAL_ITERATIVE(n):
+1. Set result = 1
+2. For i = 1 to n: result = result * i
+3. Return result
+4. Stop
+Program:
+/* Practical 24: Analyze Non-Recursive Algorithm Mathematically & Implement in C (CO4)
+ * Example: Factorial using Iteration
+ * The loop runs n times, each iteration doing O(1) work => T(n) = O(n)
+ */
+#include <stdio.h>
+long long factorial(int n) {
+    long long result = 1;
+    for (int i = 2; i <= n; i++)          /* Loop runs (n-1) times : O(n) */
+        result *= i;                        /* O(1) work per iteration */
+    return result;
+}
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Factorial of %d = %lld\n", n, factorial(n));
+    printf("\nMathematical Analysis:\n");
+    printf("Loop runs from i = 2 to n, i.e. (n-1) times.\n");
+    printf("Each iteration performs a constant amount of work O(1).\n");
+    printf("Total Time Complexity: T(n) = (n-1) * O(1) = O(n)\n");
+    printf("Space Complexity     : O(1)  (no extra space, only loop variables)\n");
+    return 0;
+}
+Sample Output:
+Enter a number: 5
+Factorial of 5 = 120
+ 
+Mathematical Analysis:
+Loop runs from i = 2 to n, i.e. (n-1) times.
+Each iteration performs O(1) work.
+Total Time Complexity: T(n) = (n-1) * O(1) = O(n)
+Space Complexity     : O(1)
+ Practical No. 25
+Course Outcome: CO5
+Aim: Write a program to implement Heap Sort.
+Theory: Heap Sort first builds a Max-Heap from the input array — a complete binary tree in which every parent is greater than or equal to its children. It then repeatedly swaps the root (the current maximum) with the last unsorted element, shrinks the heap by one, and calls 'heapify' to restore the heap property. It runs in O(n log n) time, is in-place, but is not stable.
+Algorithm:
+1. Build a max-heap from the input array (call heapify for all non-leaf nodes, bottom-up)
+2. For i = n-1 down to 1:
+   a. Swap arr[0] with arr[i]
+   b. Call heapify(arr, i, 0) to restore the heap property on the reduced array
+3. The array is now sorted in ascending order
+4. Stop
+Program:
+/* Practical 25: Heap Sort (CO5) */
+#include <stdio.h>
+void heapify(int arr[], int n, int i) {
+    int largest = i, l = 2*i + 1, r = 2*i + 2;
+    if (l < n && arr[l] > arr[largest]) largest = l;
+    if (r < n && arr[r] > arr[largest]) largest = r;
+    if (largest != i) {
+        int temp = arr[i]; arr[i] = arr[largest]; arr[largest] = temp;
+        heapify(arr, n, largest);
+    }
+}
+void heapSort(int arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--) heapify(arr, n, i);
+    for (int i = n - 1; i > 0; i--) {
+        int temp = arr[0]; arr[0] = arr[i]; arr[i] = temp;
+        heapify(arr, i, 0);
+    }
+}
+int main() {
+    int n;
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+    int arr[n];
+    printf("Enter elements: ");
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    heapSort(arr, n);
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+Sample Output:
+Enter number of elements: 6
+Enter elements: 5 3 8 1 9 2
+Sorted array: 1 2 3 5 8 9
+
+ Practical No. 26
+Course Outcome: CO5
+Aim: Write a program to implement Counting Sort.
+Theory: Counting Sort is a non-comparison-based sorting algorithm suited to integers within a known range. It counts the occurrences of each distinct value, converts these counts into cumulative counts that give each element's final position, and then places elements into an output array accordingly. It runs in O(n+k) time (k = range of input) and is stable.
+Algorithm:
+1. Find the maximum value in the array; create a count array of size (max+1), initialized to 0
+2. For every element in the input array, increment count[element]
+3. Transform count[] into cumulative counts: count[i] += count[i-1]
+4. Build the output array: scanning the input from the end, place each element at position count[element]-1 in the output, then decrement count[element]
+5. Copy the output array back to the original array
+6. Stop
+Program:
+/* Practical 26: Counting Sort (CO5) */
+#include <stdio.h>
+void countingSort(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) if (arr[i] > max) max = arr[i];
+    int count[max + 1];
+    for (int i = 0; i <= max; i++) count[i] = 0;
+    for (int i = 0; i < n; i++) count[arr[i]]++;
+    for (int i = 1; i <= max; i++) count[i] += count[i - 1];
+    int output[n];
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[arr[i]] - 1] = arr[i];
+        count[arr[i]]--;
+    }
+    for (int i = 0; i < n; i++) arr[i] = output[i];
+}
+int main() {
+    int n;
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+    int arr[n];
+    printf("Enter elements (positive integers): ");
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    countingSort(arr, n);
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+Sample Output:
+Enter number of elements: 6
+Enter elements (positive integers): 5 3 8 1 9 2
+Sorted array: 1 2 3 5 8 9
+
+ Practical No. 27
+Course Outcome: CO5
+Aim: Write a program to implement Radix Sort.
+Theory: Radix Sort sorts numbers digit by digit, starting from the Least Significant Digit (LSD) to the Most Significant Digit, using a stable sub-sort (typically Counting Sort) at each digit position. Because the sub-sort is stable, the ordering achieved by earlier (less significant) digit passes is preserved. It runs in O(d·(n+k)) time, where d is the number of digits.
+Algorithm:
+1. Find the maximum number in the array to determine the number of digits, d
+2. For each digit position (units, tens, hundreds, ...):
+   a. Perform a stable Counting Sort of the array based on the current digit
+3. Repeat step 2 for all d digit positions
+4. The array is now sorted
+5. Stop
+Program:
+/* Practical 27: Radix Sort (CO5) */
+#include <stdio.h>
+int getMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) if (arr[i] > max) max = arr[i];
+    return max;
+}
+void countSortByDigit(int arr[], int n, int exp) {
+    int output[n], count[10] = {0};
+    for (int i = 0; i < n; i++) count[(arr[i] / exp) % 10]++;
+    for (int i = 1; i < 10; i++) count[i] += count[i - 1];
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+    for (int i = 0; i < n; i++) arr[i] = output[i];
+}
+void radixSort(int arr[], int n) {
+    int max = getMax(arr, n);
+    for (int exp = 1; max / exp > 0; exp *= 10) countSortByDigit(arr, n, exp);
+}
+int main() {
+    int n;
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+    int arr[n];
+    printf("Enter elements (positive integers): ");
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    radixSort(arr, n);
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+    return 0;
+}
+Sample Output:
+Enter number of elements: 6
+Enter elements (positive integers): 170 45 75 90 802 24
+Sorted array: 24 45 75 90 170 802
+
+ Practical No. 28
+Course Outcome: CO5
+Aim: Write a program to implement Bucket Sort.
+Theory: Bucket Sort distributes the elements of the input array into a number of 'buckets' according to their value range, sorts each bucket individually (typically using Insertion Sort), and then concatenates the buckets in order to obtain the fully sorted array. It performs best (average O(n+k)) when the input is uniformly distributed over a known range.
+Algorithm:
+1. Create n empty buckets
+2. For every element in the input array, compute its bucket index based on its value range and insert it into the corresponding bucket
+3. Sort each bucket individually (e.g., using Insertion Sort)
+4. Concatenate all buckets in order to produce the sorted array
+5. Stop
+Program:
+/* Practical 28: Bucket Sort (CO5) */
+#include <stdio.h>
+#define BUCKETS 10
+void insertionSort(float arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        float key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) { arr[j + 1] = arr[j]; j--; }
+        arr[j + 1] = key;
+    }
+}
+void bucketSort(float arr[], int n) {
+    float buckets[BUCKETS][100];
+    int bucketCount[BUCKETS] = {0};
+    for (int i = 0; i < n; i++) {
+        int idx = (int)(arr[i] * BUCKETS);
+        if (idx >= BUCKETS) idx = BUCKETS - 1;
+        buckets[idx][bucketCount[idx]++] = arr[i];
+    }
+    int k = 0;
+    for (int i = 0; i < BUCKETS; i++) {
+        insertionSort(buckets[i], bucketCount[i]);
+        for (int j = 0; j < bucketCount[i]; j++) arr[k++] = buckets[i][j];
+    }
+}
+int main() {
+    int n;
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+    float arr[n];
+    printf("Enter elements (between 0 and 1): ");
+    for (int i = 0; i < n; i++) scanf("%f", &arr[i]);
+    bucketSort(arr, n);
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) printf("%.2f ", arr[i]);
+    printf("\n");
+    return 0;
+}
+Sample Output:
+Enter number of elements: 5
+Enter elements (between 0 and 1): 0.78 0.17 0.39 0.26 0.72
+Sorted array: 0.17 0.26 0.39 0.72 0.78
+
+ Practical No. 29
+Course Outcome: CO5, CO6
+Aim: Write a menu-driven C program to implement Merge Sort, Quick Sort, Heap Sort, Counting Sort, Radix Sort and Bucket Sort. The program reads a list of positive integers from a user-specified input file, executes the chosen sort, displays the array after each significant step (prompting the user to press Enter to continue), and finally displays the sorted array with a success message. Invalid menu choices are handled appropriately.
+Theory: This program integrates several sorting algorithms — Merge Sort, Quick Sort, Heap Sort, Counting Sort, Radix Sort, and Bucket Sort — behind a single menu-driven interface. It reads the input data from a user-specified file and, after the user chooses an algorithm, displays the array after each significant step (pausing for the user to press Enter), reinforcing how each algorithm progressively rearranges the data.
+Algorithm:
+1. Read positive integers from the specified input file into an array
+2. Display a sorting menu offering each algorithm and an Exit option
+3. Read the user's choice
+4. Based on the choice, call the corresponding sort function, displaying the array after each significant step
+5. Display the final sorted array
+6. Repeat from step 2 until the user selects Exit
+7. Stop
+Program:
+/* Practical 29: Menu-driven C program implementing Merge Sort, Quick Sort, Heap Sort,
+ * Counting Sort, Radix Sort and Bucket Sort. Reads input from a user-specified file,
+ * displays array after each significant step, and confirms successful sort. (CO5, CO6) */
+#include <stdio.h>
+#include <stdlib.h>
+#define MAXN 100
+ 
+int n;
+int original[MAXN];
+ 
+void readFile(char *filename) {
+    FILE *fp = fopen(filename, "r");
+    if (fp == NULL) { printf("Error: cannot open file %s\n", filename); exit(1); }
+    n = 0;
+    while (fscanf(fp, "%d", &original[n]) == 1) n++;
+    fclose(fp);
+}
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) printf("%d ", arr[i]);
+    printf("\n");
+}
+void pause() {
+    printf("Press Enter to continue...");
+    getchar(); getchar();
+}
+ 
+/* ---------- Merge Sort ---------- */
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int L[n1], R[n2];
+    for (int i = 0; i < n1; i++) L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
+    printf("Merged [%d..%d]: ", l, r); printArray(arr, n); pause();
+}
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+ 
+/* ---------- Quick Sort ---------- */
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high], i = low - 1;
+    for (int j = low; j < high; j++)
+        if (arr[j] < pivot) { i++; int t = arr[i]; arr[i] = arr[j]; arr[j] = t; }
+    int t = arr[i + 1]; arr[i + 1] = arr[high]; arr[high] = t;
+    printf("Partition around pivot %d: ", pivot); printArray(arr, n); pause();
+    return i + 1;
+}
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+ 
+/* ---------- Heap Sort ---------- */
+void heapify(int arr[], int n, int i) {
+    int largest = i, l = 2*i+1, r = 2*i+2;
+    if (l < n && arr[l] > arr[largest]) largest = l;
+    if (r < n && arr[r] > arr[largest]) largest = r;
+    if (largest != i) { int t = arr[i]; arr[i] = arr[largest]; arr[largest] = t; heapify(arr, n, largest); }
+}
+void heapSort(int arr[], int n) {
+    for (int i = n/2 - 1; i >= 0; i--) heapify(arr, n, i);
+    for (int i = n - 1; i > 0; i--) {
+        int t = arr[0]; arr[0] = arr[i]; arr[i] = t;
+        heapify(arr, i, 0);
+        printf("After extracting max, pass %d: ", n - i); printArray(arr, n); pause();
+    }
+}
+ 
+/* ---------- Counting Sort ---------- */
+void countingSort(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) if (arr[i] > max) max = arr[i];
+    int count[max + 1];
+    for (int i = 0; i <= max; i++) count[i] = 0;
+    for (int i = 0; i < n; i++) count[arr[i]]++;
+    printf("Count array built.\n"); pause();
+    for (int i = 1; i <= max; i++) count[i] += count[i - 1];
+    printf("Cumulative count array built.\n"); pause();
+    int output[n];
+    for (int i = n - 1; i >= 0; i--) { output[count[arr[i]] - 1] = arr[i]; count[arr[i]]--; }
+    for (int i = 0; i < n; i++) arr[i] = output[i];
+    printf("Output array placed: "); printArray(arr, n); pause();
+}
+ 
+/* ---------- Radix Sort ---------- */
+int getMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) if (arr[i] > max) max = arr[i];
+    return max;
+}
+void countSortByDigit(int arr[], int n, int exp) {
+    int output[n], count[10] = {0};
+    for (int i = 0; i < n; i++) count[(arr[i]/exp)%10]++;
+    for (int i = 1; i < 10; i++) count[i] += count[i-1];
+    for (int i = n - 1; i >= 0; i--) { output[count[(arr[i]/exp)%10]-1] = arr[i]; count[(arr[i]/exp)%10]--; }
+    for (int i = 0; i < n; i++) arr[i] = output[i];
+    printf("After sorting by digit place %d: ", exp); printArray(arr, n); pause();
+}
+void radixSort(int arr[], int n) {
+    int max = getMax(arr, n);
+    for (int exp = 1; max/exp > 0; exp *= 10) countSortByDigit(arr, n, exp);
+}
+ 
+/* ---------- Bucket Sort ---------- */
+void insertionSortF(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i], j = i - 1;
+        while (j >= 0 && arr[j] > key) { arr[j+1] = arr[j]; j--; }
+        arr[j+1] = key;
+    }
+}
+void bucketSort(int arr[], int n) {
+    int maxVal = arr[0];
+    for (int i = 1; i < n; i++) if (arr[i] > maxVal) maxVal = arr[i];
+    int bucketCount = n, buckets[bucketCount][MAXN], bsize[bucketCount];
+    for (int i = 0; i < bucketCount; i++) bsize[i] = 0;
+    for (int i = 0; i < n; i++) {
+        int idx = (int)(((long)arr[i] * bucketCount) / (maxVal + 1));
+        buckets[idx][bsize[idx]++] = arr[i];
+    }
+    printf("Elements distributed into %d buckets.\n", bucketCount); pause();
+    int k = 0;
+    for (int i = 0; i < bucketCount; i++) {
+        insertionSortF(buckets[i], bsize[i]);
+        for (int j = 0; j < bsize[i]; j++) arr[k++] = buckets[i][j];
+    }
+    printf("Buckets merged: "); printArray(arr, n); pause();
+}
+ 
+int main() {
+    char filename[100];
+    int arr[MAXN], choice;
+ 
+    printf("Enter input file name containing positive integers: ");
+    scanf("%s", filename);
+    readFile(filename);
+ 
+    do {
+        printf("\n===== SORTING MENU =====\n");
+        printf("1. Merge Sort\n2. Quick Sort\n3. Heap Sort\n");
+        printf("4. Counting Sort\n5. Radix Sort\n6. Bucket Sort\n7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        if (choice == 7) { printf("Program Terminated.\n"); break; }
+ 
+        for (int i = 0; i < n; i++) arr[i] = original[i];
+        printf("\nOriginal array: "); printArray(arr, n);
+ 
+        switch (choice) {
+            case 1: mergeSort(arr, 0, n - 1); break;
+            case 2: quickSort(arr, 0, n - 1); break;
+            case 3: heapSort(arr, n); break;
+            case 4: countingSort(arr, n); break;
+            case 5: radixSort(arr, n); break;
+            case 6: bucketSort(arr, n); break;
+            default: printf("Invalid choice!\n"); continue;
+        }
+        printf("\nSorted array: "); printArray(arr, n);
+        printf("Data has been sorted successfully.\n");
+    } while (choice != 7);
+ 
+    return 0;
+}
+Sample Output:
+Enter input file name containing positive integers: input.txt
+(file contents: 38 27 43 3 9 82 10)
+ 
+===== SORTING MENU =====
+1. Merge Sort  2. Quick Sort  3. Heap Sort
+4. Counting Sort  5. Radix Sort  6. Bucket Sort  7. Exit
+Enter your choice: 1
+ 
+Original array: 38 27 43 3 9 82 10
+Merged [0..1]: 27 38 43 3 9 82 10
+Press Enter to continue...
+Merged [2..3]: 27 38 3 43 9 82 10
+Press Enter to continue...
+Merged [0..3]: 3 27 38 43 9 82 10
+Press Enter to continue...
+Merged [4..5]: 3 27 38 43 9 82 10
+Press Enter to continue...
+Merged [4..6]: 3 27 38 43 9 10 82
+Press Enter to continue...
+Merged [0..6]: 3 9 10 27 38 43 82
+Press Enter to continue...
+ 
+Sorted array: 3 9 10 27 38 43 82
+Data has been sorted successfully.
+ 
+Enter your choice: 7
+Program Terminated.
+
+ Practical No. 30
+Course Outcome: CO4, CO6
+Aim: Write a C program to analyze and compare the performance of Merge Sort, Quick Sort, Heap Sort, Counting Sort, Radix Sort, and Bucket Sort. The program reads a list of positive integers from a user-specified input file, runs each algorithm on an identical copy of the data, records execution time, comparisons and data movements, and writes a comparative report (including best/average/worst-case complexity, space complexity, and stability) to an output file.
+Theory: This program empirically compares the six sorting algorithms by running each of them on an identical copy of the same input data. For every algorithm it measures the execution time (using clock()), and counts the number of comparisons and element movements performed, then reports these figures alongside each algorithm's theoretical best-case, average-case, and worst-case time complexity, space complexity, and stability — helping correlate theoretical analysis with observed, practical performance.
+Algorithm:
+1. Read the input array from the specified file
+2. For each sorting algorithm (Merge, Quick, Heap, Counting, Radix, Bucket):
+   a. Copy the original array into a working array
+   b. Reset the comparison and movement counters, and start the timer
+   c. Execute the sort, then stop the timer
+   d. Record the elapsed time, comparisons, and movements, along with the algorithm's complexity and stability information
+3. Write a comparative report table to the specified output file
+4. Display a completion message
+5. Stop
+Program:
+/* Practical 30: Analyze and compare performance of Merge Sort, Quick Sort, Heap Sort,
+ * Counting Sort, Radix Sort and Bucket Sort. Reads input from file, runs each algorithm
+ * on an identical copy, records execution time, comparisons/movements, and generates
+ * a comparative report to an output file. (CO4, CO6) */
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAXN 1000
+ 
+int n;
+int original[MAXN];
+long comparisons, movements;
+ 
+void readFile(char *filename) {
+    FILE *fp = fopen(filename, "r");
+    if (fp == NULL) { printf("Error: cannot open file %s\n", filename); exit(1); }
+    n = 0;
+    while (fscanf(fp, "%d", &original[n]) == 1) n++;
+    fclose(fp);
+}
+ 
+/* ---------- Merge Sort ---------- */
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int L[n1], R[n2];
+    for (int i = 0; i < n1; i++) L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+        comparisons++;
+        arr[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
+        movements++;
+    }
+    while (i < n1) { arr[k++] = L[i++]; movements++; }
+    while (j < n2) { arr[k++] = R[j++]; movements++; }
+}
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+ 
+/* ---------- Quick Sort ---------- */
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high], i = low - 1;
+    for (int j = low; j < high; j++) {
+        comparisons++;
+        if (arr[j] < pivot) { i++; int t = arr[i]; arr[i] = arr[j]; arr[j] = t; movements += 3; }
+    }
+    int t = arr[i+1]; arr[i+1] = arr[high]; arr[high] = t; movements += 3;
+    return i + 1;
+}
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+ 
+/* ---------- Heap Sort ---------- */
+void heapify(int arr[], int n, int i) {
+    int largest = i, l = 2*i+1, r = 2*i+2;
+    if (l < n) { comparisons++; if (arr[l] > arr[largest]) largest = l; }
+    if (r < n) { comparisons++; if (arr[r] > arr[largest]) largest = r; }
+    if (largest != i) { int t = arr[i]; arr[i] = arr[largest]; arr[largest] = t; movements += 3; heapify(arr, n, largest); }
+}
+void heapSort(int arr[], int n) {
+    for (int i = n/2 - 1; i >= 0; i--) heapify(arr, n, i);
+    for (int i = n - 1; i > 0; i--) {
+        int t = arr[0]; arr[0] = arr[i]; arr[i] = t; movements += 3;
+        heapify(arr, i, 0);
+    }
+}
+ 
+/* ---------- Counting Sort ---------- */
+void countingSort(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) { comparisons++; if (arr[i] > max) max = arr[i]; }
+    int count[max + 1];
+    for (int i = 0; i <= max; i++) count[i] = 0;
+    for (int i = 0; i < n; i++) count[arr[i]]++;
+    for (int i = 1; i <= max; i++) count[i] += count[i - 1];
+    int output[n];
+    for (int i = n - 1; i >= 0; i--) { output[count[arr[i]] - 1] = arr[i]; count[arr[i]]--; movements++; }
+    for (int i = 0; i < n; i++) arr[i] = output[i];
+}
+ 
+/* ---------- Radix Sort ---------- */
+int getMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) { comparisons++; if (arr[i] > max) max = arr[i]; }
+    return max;
+}
+void countSortByDigit(int arr[], int n, int exp) {
+    int output[n], count[10] = {0};
+    for (int i = 0; i < n; i++) count[(arr[i]/exp)%10]++;
+    for (int i = 1; i < 10; i++) count[i] += count[i-1];
+    for (int i = n - 1; i >= 0; i--) { output[count[(arr[i]/exp)%10]-1] = arr[i]; count[(arr[i]/exp)%10]--; movements++; }
+    for (int i = 0; i < n; i++) arr[i] = output[i];
+}
+void radixSort(int arr[], int n) {
+    int max = getMax(arr, n);
+    for (int exp = 1; max/exp > 0; exp *= 10) countSortByDigit(arr, n, exp);
+}
+ 
+/* ---------- Bucket Sort ---------- */
+void insertionSortF(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i], j = i - 1;
+        while (j >= 0 && arr[j] > key) { comparisons++; arr[j+1] = arr[j]; j--; movements++; }
+    }
+}
+void bucketSort(int arr[], int n) {
+    int maxVal = arr[0];
+    for (int i = 1; i < n; i++) if (arr[i] > maxVal) maxVal = arr[i];
+    int bucketCount = n, buckets[bucketCount][MAXN], bsize[bucketCount];
+    for (int i = 0; i < bucketCount; i++) bsize[i] = 0;
+    for (int i = 0; i < n; i++) {
+        int idx = (int)(((long)arr[i] * bucketCount) / (maxVal + 1));
+        buckets[idx][bsize[idx]++] = arr[i];
+    }
+    int k = 0;
+    for (int i = 0; i < bucketCount; i++) {
+        insertionSortF(buckets[i], bsize[i]);
+        for (int j = 0; j < bsize[i]; j++) arr[k++] = buckets[i][j];
+    }
+}
+ 
+double elapsedMs(clock_t start, clock_t end) {
+    return ((double)(end - start)) / CLOCKS_PER_SEC * 1000.0;
+}
+ 
+void writeRow(FILE *out, char *name, double time, long cmp, long mov,
+              char *best, char *avg, char *worst, char *space, char *stable) {
+    fprintf(out, "%-15s %-10.4f %-14ld %-14ld %-10s %-10s %-10s %-25s %-15s\n",
+            name, time, cmp, mov, best, avg, worst, space, stable);
+}
+ 
+int main() {
+    char infile[100], outfile[100];
+    printf("Enter input file name containing positive integers: ");
+    scanf("%s", infile);
+    printf("Enter output file name for report: ");
+    scanf("%s", outfile);
+    readFile(infile);
+ 
+    FILE *out = fopen(outfile, "w");
+    if (out == NULL) { printf("Error creating output file.\n"); return 1; }
+ 
+    fprintf(out, "Comparative Performance Report of Sorting Algorithms\n");
+    fprintf(out, "Input Size (n) = %d\n\n", n);
+    fprintf(out, "%-15s %-10s %-14s %-14s %-10s %-10s %-10s %-25s %-15s\n",
+            "Algorithm","Time(ms)","Comparisons","Movements","Best","Average","Worst","Space","Stable");
+ 
+    int arr[MAXN];
+    clock_t start, end;
+ 
+    /* Merge Sort */
+    for (int i = 0; i < n; i++) arr[i] = original[i];
+    comparisons = 0; movements = 0;
+    start = clock(); mergeSort(arr, 0, n - 1); end = clock();
+    writeRow(out, "Merge Sort", elapsedMs(start, end), comparisons, movements,
+              "O(n log n)", "O(n log n)", "O(n log n)", "O(n)", "Yes");
+ 
+    /* Quick Sort */
+    for (int i = 0; i < n; i++) arr[i] = original[i];
+    comparisons = 0; movements = 0;
+    start = clock(); quickSort(arr, 0, n - 1); end = clock();
+    writeRow(out, "Quick Sort", elapsedMs(start, end), comparisons, movements,
+              "O(n log n)", "O(n log n)", "O(n^2)", "O(log n)", "No");
+ 
+    /* Heap Sort */
+    for (int i = 0; i < n; i++) arr[i] = original[i];
+    comparisons = 0; movements = 0;
+    start = clock(); heapSort(arr, n); end = clock();
+    writeRow(out, "Heap Sort", elapsedMs(start, end), comparisons, movements,
+              "O(n log n)", "O(n log n)", "O(n log n)", "O(1)", "No");
+ 
+    /* Counting Sort */
+    for (int i = 0; i < n; i++) arr[i] = original[i];
+    comparisons = 0; movements = 0;
+    start = clock(); countingSort(arr, n); end = clock();
+    writeRow(out, "Counting Sort", elapsedMs(start, end), comparisons, movements,
+              "O(n+k)", "O(n+k)", "O(n+k)", "O(n+k)", "Yes");
+ 
+    /* Radix Sort */
+    for (int i = 0; i < n; i++) arr[i] = original[i];
+    comparisons = 0; movements = 0;
+    start = clock(); radixSort(arr, n); end = clock();
+    writeRow(out, "Radix Sort", elapsedMs(start, end), comparisons, movements,
+              "O(d(n+k))", "O(d(n+k))", "O(d(n+k))", "O(n+k)", "Yes");
+ 
+    /* Bucket Sort */
+    for (int i = 0; i < n; i++) arr[i] = original[i];
+    comparisons = 0; movements = 0;
+    start = clock(); bucketSort(arr, n); end = clock();
+    writeRow(out, "Bucket Sort", elapsedMs(start, end), comparisons, movements,
+              "O(n+k)", "O(n+k)", "O(n^2)", "O(n+k)", "Yes");
+ 
+    fprintf(out, "\nSummary:\n");
+    fprintf(out, "For the given input, execution time and operation counts are listed above.\n");
+    fprintf(out, "Distribution sorts (Counting/Radix/Bucket) perform best on bounded-range\n");
+    fprintf(out, "positive integers, while comparison sorts (Merge/Quick/Heap) offer general-\n");
+    fprintf(out, "purpose O(n log n) performance regardless of data distribution.\n");
+    fprintf(out, "Report generated successfully.\n");
+ 
+    fclose(out);
+    printf("\nComparison completed. Report written to %s\n", outfile);
+    return 0;
+}
+Sample Output:
+Enter input file name containing positive integers: input.txt
+Enter output file name for report: report.txt
+ 
+Comparison completed. Report written to report.txt
+ 
+--- report.txt ---
+Comparative Performance Report of Sorting Algorithms
+Input Size (n) = 7
+ 
+Algorithm       Time(ms)  Comparisons  Movements  Best        Average     Worst       Space      
+Merge Sort      0.2200    14           20         O(n log n)  O(n log n)  O(n log n)  O(n)       Yes
+Quick Sort      0.0010    11           27         O(n log n)  O(n log n)  O(n^2)      O(log n)   No
+Heap Sort       0.0010    19           45         O(n log n)  O(n log n)  O(n log n)  O(1)       No
+Counting Sort   0.0010    6            7          O(n+k)      O(n+k)      O(n+k)      O(n+k)     Yes
+Radix Sort      0.0010    6            14         O(d(n+k))   O(d(n+k))   O(d(n+k))   O(n+k)     Yes
+Bucket Sort     0.1710    0            0          O(n+k)      O(n+k)      O(n^2)      O(n+k)         Yes
+
+
+
+
+
+
